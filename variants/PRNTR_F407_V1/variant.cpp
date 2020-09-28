@@ -192,6 +192,9 @@ WEAK void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  /* Ensure CCM RAM clock is enabled */
+  __HAL_RCC_CCMDATARAMEN_CLK_ENABLE();
+
   /**Configure the Systick interrupt time
   */
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
