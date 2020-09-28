@@ -170,7 +170,7 @@ extern const PinDescription g_APinDescription[];
 #ifdef __cplusplus
 #include "AnalogIn.h"
 #include "AnalogOut.h"
-#include "ConfigurableUART.h"
+//#include "ConfigurableUART.h"
 #include "USBSerial.h"
 #endif
 

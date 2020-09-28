@@ -18,7 +18,7 @@
 
 #include "Arduino.h"
 #include "PinConfigured.h"
-#include "HybridPWM.h"
+//#include "HybridPWM.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +52,7 @@ void pinModeDuet(Pin pin, enum PinMode ulMode, uint32_t debounceCutoff) noexcept
             pin_function(pin, STM_PIN_DATA(STM_MODE_OUTPUT_PP, GPIO_NOPULL, 0));
             digitalWriteFast(pin, 1);
             break;
-            
+#if 0            
         case OUTPUT_PWM_LOW:
             HybridPWMPin::allocate(pin, 0.0f);
             break;
@@ -60,7 +60,7 @@ void pinModeDuet(Pin pin, enum PinMode ulMode, uint32_t debounceCutoff) noexcept
         case OUTPUT_PWM_HIGH:
             HybridPWMPin::allocate(pin, 1.0f);
             break;
-
+#endif
         case AIN:
             //analog in
             pin_function(pin, STM_PIN_DATA(STM_MODE_ANALOG, GPIO_NOPULL, 0));
