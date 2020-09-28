@@ -172,6 +172,7 @@ extern const PinDescription g_APinDescription[];
 #include "AnalogOut.h"
 //#include "ConfigurableUART.h"
 #include "USBSerial.h"
+#include "WSerial.h"
 #endif
 
 #endif // Arduino_h
