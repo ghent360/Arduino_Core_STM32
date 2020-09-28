@@ -75,7 +75,7 @@ build.usb_flags=-DUSBCON {build.usb_speed} -DUSBD_VID={build.vid} '-DUSB_MANUFAC
 build.usb_manufacturer="Unknown"
 
 # Build information's
-build.info.flags=-D{build.series} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DBOARD_NAME="{build.board}"
+build.info.flags=-D{build.series} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DBOARD_NAME="{build.board}" -Dnoexcept=
 
 # Defaults config
 build.xSerial=-DHAL_UART_MODULE_ENABLED
