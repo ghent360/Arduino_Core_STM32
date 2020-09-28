@@ -35,6 +35,7 @@
   *
   ******************************************************************************
   */
+
 #include "stm32_def.h"
 #include "analog.h"
 #include "HardwareTimer.h"
@@ -45,6 +46,8 @@
 extern "C" {
 #endif
 
+// ADC functionality replaced with RRF by AnalogIn
+#undef HAL_ADC_MODULE_ENABLED
 
 /* Private_Variables */
 #if defined(HAL_ADC_MODULE_ENABLED) || defined(HAL_DAC_MODULE_ENABLED)
@@ -983,9 +986,10 @@ uint16_t adc_read_value(PinName pin)
   * @param  value : the value to push on the PWM output
   * @retval None
   */
-void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value)
+bool pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value)
 {
   TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
+  if (Instance == nullptr) return false;
   HardwareTimer *HT;
   uint32_t index = get_timer_index(Instance);
   if (HardwareTimer_Handle[index] == NULL) {
@@ -1000,6 +1004,7 @@ void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value)
   HT->setOverflow(PWM_freq, HERTZ_FORMAT);
   HT->setCaptureCompare(channel, value, RESOLUTION_12B_COMPARE_FORMAT);
   HT->resume();
+  return true;
 }
 /**
   * @brief  This function will disable the PWM
@@ -1010,6 +1015,7 @@ void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value)
 void pwm_stop(PinName pin)
 {
   TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
+  if (Instance == nullptr) return;
   HardwareTimer *HT;
   uint32_t index = get_timer_index(Instance);
   if (HardwareTimer_Handle[index] == NULL) {

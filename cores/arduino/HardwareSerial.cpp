@@ -287,7 +287,7 @@ int HardwareSerial::_tx_complete_irq(serial_t *obj)
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud, byte config)
+void HardwareSerial::begin(unsigned long baud, uint8_t config)
 {
   uint32_t databits = 0;
   uint32_t stopbits = 0;
@@ -454,5 +454,16 @@ void HardwareSerial::setRx(PinName _rx)
 void HardwareSerial::setTx(PinName _tx)
 {
   _serial.pin_tx = _tx;
+}
+
+void HardwareSerial::setInterruptPriority(uint32_t priority) noexcept
+{
+  uart_set_interrupt_priority(&_serial, priority);
+}
+
+uint32_t HardwareSerial::getInterruptPriority() noexcept
+{
+  // FIXME need to actually get the priority
+  return 0;
 }
 #endif // HAL_UART_MODULE_ENABLED

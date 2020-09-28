@@ -4,7 +4,7 @@
 /*
  * Core and peripherals registers definitions
 */
-#include "interrupt.h"
+//#include "interrupt.h"
 #include "analog.h"
 #include "backup.h"
 #include "clock.h"
@@ -14,7 +14,7 @@
 #include "hw_config.h"
 #include "low_power.h"
 #include "rtc.h"
-#include "spi_com.h"
+//#include "spi_com.h"
 #include "stm32_eeprom.h"
 #include "timer.h"
 #include "twi.h"

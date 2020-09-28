@@ -28,13 +28,17 @@ uint32_t millis(void)
   return getCurrentMillis();
 }
 
+uint64_t millis64()
+{
+  return getCurrentMillis64();
+}
 // Interrupt-compatible version of micros
 uint32_t micros(void)
 {
   return getCurrentMicros();
 }
 
-void delay(uint32_t ms)
+void coreDelay(uint32_t ms)
 {
   if (ms != 0) {
     uint32_t start = getCurrentMillis();

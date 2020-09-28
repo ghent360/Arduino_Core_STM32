@@ -126,12 +126,13 @@ uint32_t spi_getClkFreq(spi_t *obj)
 /**
   * @brief  SPI initialization function
   * @param  obj : pointer to spi_t structure
+  * @param spimode: master/slave mode
   * @param  speed : spi output speed
   * @param  mode : one of the spi modes
   * @param  msb : set to 1 in msb first
   * @retval None
   */
-void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb)
+void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uint8_t msb)
 {
   if (obj == NULL) {
     return;
@@ -139,7 +140,8 @@ void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb)
 
   SPI_HandleTypeDef *handle = &(obj->handle);
   uint32_t spi_freq = 0;
-  uint32_t pull = 0;
+  // See FIXME below
+  //uint32_t pull = 0;
 
   // Determine the SPI to use
   SPI_TypeDef *spi_mosi = pinmap_peripheral(obj->pin_mosi, PinMap_SPI_MOSI);
@@ -166,14 +168,14 @@ void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb)
 
   // Configure the SPI pins
   if (obj->pin_ssel != NC) {
-    handle->Init.NSS = SPI_NSS_HARD_OUTPUT;
+    handle->Init.NSS = (spimode == SPI_MODE_SLAVE ? SPI_NSS_HARD_INPUT : SPI_NSS_HARD_OUTPUT);
   } else {
     handle->Init.NSS = SPI_NSS_SOFT;
   }
 
   /* Fill default value */
   handle->Instance               = obj->spi;
-  handle->Init.Mode              = SPI_MODE_MASTER;
+  handle->Init.Mode              = spimode;
 
   spi_freq = spi_getClkFreqInst(obj->spi);
   if (speed >= (spi_freq / SPI_SPEED_CLOCK_DIV2_MHZ)) {
@@ -198,13 +200,13 @@ void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb)
 
   handle->Init.Direction         = SPI_DIRECTION_2LINES;
 
-  if ((mode == SPI_MODE_0) || (mode == SPI_MODE_2)) {
+  if ((mode == CORE_SPI_MODE_0) || (mode == CORE_SPI_MODE_2)) {
     handle->Init.CLKPhase          = SPI_PHASE_1EDGE;
   } else {
     handle->Init.CLKPhase          = SPI_PHASE_2EDGE;
   }
 
-  if ((mode == SPI_MODE_0) || (mode == SPI_MODE_1)) {
+  if ((mode == CORE_SPI_MODE_0) || (mode == CORE_SPI_MODE_1)) {
     handle->Init.CLKPolarity       = SPI_POLARITY_LOW;
   } else {
     handle->Init.CLKPolarity       = SPI_POLARITY_HIGH;
@@ -235,8 +237,9 @@ void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, uint8_t msb)
    * According the STM32 Datasheet for SPI peripheral we need to PULLDOWN
    * or PULLUP the SCK pin according the polarity used.
    */
-  pull = (handle->Init.CLKPolarity == SPI_POLARITY_LOW) ? GPIO_PULLDOWN : GPIO_PULLUP;
-  pin_PullConfig(get_GPIO_Port(STM_PORT(obj->pin_sclk)), STM_LL_GPIO_PIN(obj->pin_sclk), pull);
+  // FIXME setting this screws up things when in slave mode, not setting it seems fine for both modes
+  //pull = (handle->Init.CLKPolarity == SPI_POLARITY_LOW) ? GPIO_PULLDOWN : GPIO_PULLUP;
+  //pin_PullConfig(get_GPIO_Port(STM_PORT(obj->pin_sclk)), STM_LL_GPIO_PIN(obj->pin_sclk), pull);
   pinmap_pinout(obj->pin_ssel, PinMap_SPI_SSEL);
 
 #if defined SPI1_BASE
