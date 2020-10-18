@@ -24,14 +24,14 @@ extern "C" {
 
 // Pin number
 const PinName digitalPin[] = {
-  PA_0,  //D0
-  PA_1,  //D1
-  PA_2,  //D2
-  PA_3,  //D3
-  PA_4,  //D4
-  PA_5,  //D5
-  PA_6,  //D6
-  PA_7,  //D7
+  PA_0,  //D0   //A7
+  PA_1,  //D1   //A8
+  PA_2,  //D2   //A9
+  PA_3,  //D3   //A0
+  PA_4,  //D4   //A1
+  PA_5,  //D5   //A10
+  PA_6,  //D6   //A11
+  PA_7,  //D7   //A12
   PA_8,  //D8
   PA_9,  //D9
   PA_10, //D10
@@ -40,8 +40,8 @@ const PinName digitalPin[] = {
   PA_13, //D13
   PA_14, //D14
   PA_15, //D15
-  PB_0,  //D16
-  PB_1,  //D17
+  PB_0,  //D16  //A13
+  PB_1,  //D17  //A14
   PB_2,  //D18
   PB_3,  //D19
   PB_4,  //D20
@@ -56,12 +56,12 @@ const PinName digitalPin[] = {
   PB_13, //D29
   PB_14, //D30
   PB_15, //D31
-  PC_0,  //D32
-  PC_1,  //D33
-  PC_2,  //D34
-  PC_3,  //D35
-  PC_4,  //D36
-  PC_5,  //D37
+  PC_0,  //D32  //A2
+  PC_1,  //D33  //A3
+  PC_2,  //D34  //A4
+  PC_3,  //D35  //A5
+  PC_4,  //D36  //A6
+  PC_5,  //D37  //A15
   PC_6,  //D38
   PC_7,  //D39
   PC_8,  //D40
@@ -103,16 +103,27 @@ const PinName digitalPin[] = {
   PE_12, //D76
   PE_13, //D77
   PE_14, //D78
-  PE_15, //D79
+  PE_15  //D79
+};
 
-  //Duplicated ADC Pins
-  PA_3,  //D80/A0
-  PA_4,  //D81/A1
-  PC_0,  //D82/A2
-  PC_1,  //D83/A3
-  PC_2,  //D84/A4
-  PC_3,  //D85/A5
-  PC_4   //D86/A6
+// Analog (Ax) pin number array
+const uint32_t analogInputPin[] = {
+  3,  //D3   //A0
+  4,  //D4   //A1
+  32, //D32  //A2
+  33, //D33  //A3
+  34, //D34  //A4
+  35, //D35  //A5
+  36, //D36  //A6
+  0,  //D0   //A7
+  1,  //D1   //A8
+  2,  //D2   //A9
+  5,  //D5   //A10
+  6,  //D6   //A11
+  7,  //D7   //A12
+  16, //D16  //A13
+  17, //D17  //A14
+  37  //D37  //A15
 };
 
 #ifdef __cplusplus

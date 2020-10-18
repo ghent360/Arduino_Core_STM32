@@ -80,14 +80,23 @@ const PinName digitalPin[] = {
   PA_4,  //D48/A2
   PB_0,  //D49/A3
   PC_1,  //D50/A4
-  PC_0,  //D51/A5
-  // Duplicated pins in order to be aligned with PinMap_ADC
-  PA_7,  //D52/A6  = D11
-  PA_6,  //D53/A7  = D12
-  PC_2,  //D54/A8  = D28
-  PC_3,  //D55/A9  = D29
-  PC_5,  //D56/A10 = D35
-  PC_4   //D57/A11 = D45
+  PC_0   //D51/A5
+};
+
+// Analog (Ax) pin number array
+const uint32_t analogInputPin[] = {
+  46, //A0
+  47, //A1
+  48, //A2
+  49, //A3
+  50, //A4
+  51, //A5
+  11, //A6
+  12, //A7
+  28, //A8
+  29, //A9
+  35, //A10
+  45  //A11
 };
 
 #ifdef __cplusplus
@@ -107,35 +116,44 @@ extern "C" {
   */
 WEAK void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-  RCC_PeriphCLKInitTypeDef PeriphClkInit;
+  RCC_OscInitTypeDef RCC_OscInitStruct = {};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {};
 
-  __HAL_RCC_PWR_CLK_ENABLE();
-
+  /* Configure the main internal regulator output voltage */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
+  /*
+   * Initializes the RCC Oscillators according to the specified parameters
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
-  HAL_RCC_OscConfig(&RCC_OscInitStruct);
-
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_12;
+  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_3;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+    Error_Handler();
+  }
+  /* Initializes the CPU, AHB and APB buses clocks */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
                                 | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_I2C1;
-  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
+    Error_Handler();
+  }
+
+#ifdef USBCON
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {};
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
+    Error_Handler();
+  }
+#endif
 }
 
 #ifdef __cplusplus

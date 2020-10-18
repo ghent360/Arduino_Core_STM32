@@ -41,12 +41,12 @@
 #include <board.h>
 
 #ifdef __cplusplus
-#include "HardwareTimer.h"
-#include "Tone.h"
-#include "WCharacter.h"
-#include "WInterrupts.h"
-//#include "WSerial.h"
-//#include "WMath.h"
+  #include "HardwareTimer.h"
+  #include "Tone.h"
+  #include "WCharacter.h"
+  #include "WSerial.h"
+  #include "WMath.h"
+  #include "WString.h"
 #endif // __cplusplus
 
 

@@ -43,9 +43,4 @@ void detachInterrupt(uint32_t pin) noexcept;
 // Return true if we are in an interrupt service routine
 bool inInterrupt() noexcept;
 
-#ifdef __cplusplus
-
-
-#endif
-
 #endif /* _WIRING_INTERRUPTS_ */
