@@ -199,7 +199,6 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, StandardCallbackFu
   HAL_NVIC_EnableIRQ(gpio_irq_conf[id].irqnb);
 }
 
-#if 0
 /**
   * @brief  This function enable the interruption on the selected port/pin
   * @param  port : one of the gpio port
@@ -214,7 +213,6 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, void (*callback)(v
   stm32_interrupt_enable(port, pin, _c, mode);
 
 }
-#endif
 
 /**
   * @brief  This function disable the interruption on the selected port/pin

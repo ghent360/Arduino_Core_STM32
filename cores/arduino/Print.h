@@ -65,7 +65,7 @@ class Print {
     virtual size_t write(const uint8_t *buffer, size_t size) noexcept;
     size_t write(const char *buffer, size_t size) noexcept
     {
-    	return write((const uint8_t *)buffer, size);
+      return write((const uint8_t *)buffer, size);
     }
 
     // default to zero, meaning "a single write may block"

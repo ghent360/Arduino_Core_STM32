@@ -16,7 +16,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef _WIRING_INTERRUPTS_
 #define _WIRING_INTERRUPTS_
 
@@ -24,20 +23,19 @@
 
 union CallbackParameter
 {
-	void *vp;
-	uint32_t u32;
-	int32_t i32;
+  void *vp;
+  uint32_t u32;
+  int32_t i32;
 
-	CallbackParameter(void *pp) noexcept : vp(pp) { }
-	CallbackParameter(uint32_t pp) noexcept : u32(pp) { }
-	CallbackParameter(int32_t pp) noexcept : i32(pp) { }
-	CallbackParameter() noexcept : u32(0) { }
+  CallbackParameter(void *pp) noexcept : vp(pp) { }
+  CallbackParameter(uint32_t pp) noexcept : u32(pp) { }
+  CallbackParameter(int32_t pp) noexcept : i32(pp) { }
+  CallbackParameter() noexcept : u32(0) { }
 };
 
 typedef void (*StandardCallbackFunction)(CallbackParameter) noexcept;
 
 bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept;
-
 void detachInterrupt(uint32_t pin) noexcept;
 
 // Return true if we are in an interrupt service routine

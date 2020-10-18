@@ -94,7 +94,6 @@ void osSystickHandler() __attribute__((weak, alias("noOsSystickHandler")));
   * @param  None
   * @retval None
   */
-//void CoreSysTick(void)
 void SysTick_Handler(void)
 {
   HAL_IncTick();
