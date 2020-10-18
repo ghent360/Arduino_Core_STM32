@@ -62,6 +62,27 @@ bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum Inter
   return true;
 }
 
+static void callbackWrapper(CallbackParameter param) noexcept {
+  param.fp();
+}
+
+void attachInterrupt(uint32_t pin, callback_function_t callback, uint32_t mode) noexcept
+{
+  attachInterrupt(pin, callbackWrapper, mode, callback);
+}
+
+void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode)
+{
+#if !defined(HAL_EXTI_MODULE_DISABLED)
+  callback_function_t _c = callback;
+  attachInterrupt(pin, _c, mode);
+#else
+  UNUSED(pin);
+  UNUSED(callback);
+  UNUSED(mode);
+#endif
+
+}
 
 void detachInterrupt(uint32_t pin) noexcept
 {

@@ -19,14 +19,25 @@
 #ifndef _WIRING_INTERRUPTS_
 #define _WIRING_INTERRUPTS_
 
+#include <stdint.h>
 #include "Core.h"
+
+#ifdef __cplusplus
+  #include <functional>
+
+  typedef std::function<void(void) noexcept> callback_function_t;
+  void attachInterrupt(uint32_t pin, callback_function_t callback, uint32_t mode) noexcept;
+
+#endif
 
 union CallbackParameter
 {
+  void (*fp)();
   void *vp;
   uint32_t u32;
   int32_t i32;
 
+  CallbackParameter(void *pp() noexcept) noexcept : fp(pp) {}
   CallbackParameter(void *pp) noexcept : vp(pp) { }
   CallbackParameter(uint32_t pp) noexcept : u32(pp) { }
   CallbackParameter(int32_t pp) noexcept : i32(pp) { }
@@ -36,6 +47,8 @@ union CallbackParameter
 typedef void (*StandardCallbackFunction)(CallbackParameter) noexcept;
 
 bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept;
+void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode);
+
 void detachInterrupt(uint32_t pin) noexcept;
 
 // Return true if we are in an interrupt service routine
