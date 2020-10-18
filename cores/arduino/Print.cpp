@@ -35,9 +35,23 @@ size_t Print::write(const uint8_t *buffer, size_t size) noexcept
 {
   size_t n = 0;
   while (size--) {
-    n += write(*buffer++);
+    if (write(*buffer++)) {
+      n++;
+    } else {
+      break;
+    }
   }
   return n;
+}
+
+size_t Print::print(const __FlashStringHelper *ifsh) noexcept
+{
+  return print(reinterpret_cast<const char *>(ifsh));
+}
+
+size_t Print::print(const String &s) noexcept
+{
+  return write(s.c_str(), s.length());
 }
 
 size_t Print::print(const char str[]) noexcept
@@ -83,8 +97,11 @@ size_t Print::print(long n, int base) noexcept
 
 size_t Print::print(unsigned long n, int base) noexcept
 {
-  if (base == 0) return write(n);
-  else return printNumber(n, base);
+  if (base == 0) {
+    return write(n);
+  } else {
+    return printNumber(n, base);
+  }
 }
 
 size_t Print::print(long long n, int base) noexcept
@@ -119,8 +136,25 @@ size_t Print::print(double n, int digits) noexcept
 
 size_t Print::println(void) noexcept
 {
-  size_t n = print('\r');
-  n += print('\n');
+  size_t n = print(ifsh);
+  n += println();
+  return n;
+}
+
+size_t Print::print(const Printable &x) noexcept
+{
+  return x.printTo(*this);
+}
+
+size_t Print::println(void) noexcept
+{
+  return write("\r\n");
+}
+
+size_t Print::println(const String &s) noexcept
+{
+  size_t n = print(s);
+  n += println();
   return n;
 }
 
@@ -249,14 +283,16 @@ size_t Print::printNumber(unsigned long n, uint8_t base) noexcept
   *str = '\0';
 
   // prevent crash if called with base == 1
-  if (base < 2) base = 10;
+  if (base < 2) {
+    base = 10;
+  }
 
   do {
     unsigned long m = n;
     n /= base;
     char c = m - base * n;
     *--str = c < 10 ? c + '0' : c + 'A' - 10;
-  } while(n);
+  } while (n);
 
   return write(str);
 }
@@ -359,23 +395,29 @@ size_t Print::printFloat(double number, uint8_t digits) noexcept
 {
   size_t n = 0;
 
-  if (std::isnan(number)) return print("nan");
-  if (std::isinf(number)) return print("inf");
-  if (number > (double)4294967040.0) return print ("ovf");  // constant determined empirically
-  if (number <-(double)4294967040.0) return print ("ovf");  // constant determined empirically
+  if (isnan(number)) {
+    return print("nan");
+  }
+  if (isinf(number)) {
+    return print("inf");
+  }
+  if (number > 4294967040.0) {
+    return print("ovf");  // constant determined empirically
+  }
+  if (number < -4294967040.0) {
+    return print("ovf");  // constant determined empirically
+  }
 
   // Handle negative numbers
-  if (number < (double)0.0)
-  {
+  if (number < 0.0) {
      n += print('-');
      number = -number;
   }
 
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
-  for (uint8_t i=0; i<digits; ++i)
-  {
-    rounding /= (double)10.0;
+  for (uint8_t i = 0; i < digits; ++i) {
+    rounding /= 10.0;
   }
 
   number += rounding;

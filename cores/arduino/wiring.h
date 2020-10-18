@@ -36,7 +36,7 @@
 #include "wiring_pulse.h"
 #include "wiring_shift.h"
 #include "wiring_time.h"
-//#include "WInterrupts.h"
+#include "WInterrupts.h"
 
 #include <board.h>
 

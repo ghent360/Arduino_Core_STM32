@@ -45,22 +45,24 @@ class Print {
   public:
     Print() : write_error(0) {}
 
-public:
-    Print() noexcept : write_error(0) {}
-    virtual ~Print() {}
-
-    int getWriteError() noexcept { return write_error; }
-    void clearWriteError() noexcept { setWriteError(0); }
-
-    virtual size_t write(uint8_t) noexcept = 0;
-
-    size_t write(const char *str) noexcept
+    int getWriteError() noexcept
     {
-    	return (str == NULL) ? 0 : write((const uint8_t *)str, strlen(str));
+      return write_error;
+    }
+    void clearWriteError() noexcept
+    {
+      setWriteError(0);
     }
 
+    virtual size_t write(uint8_t) noexcept = 0;
+    size_t write(const char *str) noexcept
+    {
+      if (str == NULL) {
+        return 0;
+      }
+      return write((const uint8_t *)str, strlen(str));
+    }
     virtual size_t write(const uint8_t *buffer, size_t size) noexcept;
-
     size_t write(const char *buffer, size_t size) noexcept
     {
     	return write((const uint8_t *)buffer, size);

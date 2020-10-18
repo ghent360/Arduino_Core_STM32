@@ -163,8 +163,7 @@ void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uin
 
   SPI_HandleTypeDef *handle = &(obj->handle);
   uint32_t spi_freq = 0;
-  // See FIXME below
-  //uint32_t pull = 0;
+  uint32_t pull = 0;
 
   // Determine the SPI to use
   SPI_TypeDef *spi_mosi = pinmap_peripheral(obj->pin_mosi, PinMap_SPI_MOSI);
@@ -262,9 +261,10 @@ void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uin
    * According the STM32 Datasheet for SPI peripheral we need to PULLDOWN
    * or PULLUP the SCK pin according the polarity used.
    */
-  // FIXME setting this screws up things when in slave mode, not setting it seems fine for both modes
-  //pull = (handle->Init.CLKPolarity == SPI_POLARITY_LOW) ? GPIO_PULLDOWN : GPIO_PULLUP;
-  //pin_PullConfig(get_GPIO_Port(STM_PORT(obj->pin_sclk)), STM_LL_GPIO_PIN(obj->pin_sclk), pull);
+  if (spimode != SPI_MODE_SLAVE) {
+    pull = (handle->Init.CLKPolarity == SPI_POLARITY_LOW) ? GPIO_PULLDOWN : GPIO_PULLUP;
+    pin_PullConfig(get_GPIO_Port(STM_PORT(obj->pin_sclk)), STM_LL_GPIO_PIN(obj->pin_sclk), pull);
+  }
   pinmap_pinout(obj->pin_ssel, PinMap_SPI_SSEL);
 
 #if defined SPI1_BASE

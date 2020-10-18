@@ -18,6 +18,7 @@
 
   parsing functions based on TextFinder library by Michael Margolis
 */
+
 #ifndef Stream_h
 #define Stream_h
 
@@ -27,12 +28,21 @@
 // compatability macros for testing
 /*
 #define   getInt()            parseInt()
-#define   getInt(skipChar)    parseInt(skipchar)
+#define   getInt(ignore)    parseInt(ignore)
 #define   getFloat()          parseFloat()
-#define   getFloat(skipChar)  parseFloat(skipChar)
+#define   getFloat(ignore)  parseFloat(ignore)
 #define   getString( pre_string, post_string, buffer, length)
 readBytesBetween( pre_string, terminator, buffer, length)
 */
+
+// This enumeration provides the lookahead options for parseInt(), parseFloat()
+// The rules set out here are used until either the first valid character is found
+// or a time out occurs due to lack of input.
+enum LookaheadMode {
+  SKIP_ALL,       // All invalid characters are ignored.
+  SKIP_NONE,      // Nothing is skipped, and the stream is not touched unless the first waiting character is valid.
+  SKIP_WHITESPACE // Only tabs, spaces, line feeds & carriage returns are skipped.
+};
 
 #define NO_IGNORE_CHAR  '\x01' // a char not found in a valid ASCII numeric field
 
@@ -147,4 +157,5 @@ class Stream : public Print {
     int findMulti(struct MultiTarget *targets, int tCount) noexcept;
 };
 
+#undef NO_IGNORE_CHAR
 #endif

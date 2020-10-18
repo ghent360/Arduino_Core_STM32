@@ -1026,11 +1026,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   * @param  value : the value to push on the PWM output
   * @retval None
   */
-<<<<<<< HEAD:cores/arduino/stm32/analog.cpp
-bool pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value)
-=======
 void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value, TimerCompareFormat_t resolution)
->>>>>>> master:libraries/SrcWrapper/src/stm32/analog.cpp
 {
   TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
   if (Instance == nullptr) return false;
@@ -1050,16 +1046,10 @@ void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value, TimerCompareForma
     HT->setMode(channel, TIMER_OUTPUT_COMPARE_PWM1, pin);
   }
   HT->setOverflow(PWM_freq, HERTZ_FORMAT);
-<<<<<<< HEAD:cores/arduino/stm32/analog.cpp
-  HT->setCaptureCompare(channel, value, RESOLUTION_12B_COMPARE_FORMAT);
-  HT->resume();
-  return true;
-=======
   HT->setCaptureCompare(channel, value, resolution);
   if (previousMode != TIMER_OUTPUT_COMPARE_PWM1) {
     HT->resume();
   }
->>>>>>> master:libraries/SrcWrapper/src/stm32/analog.cpp
 }
 /**
   * @brief  This function will disable the PWM

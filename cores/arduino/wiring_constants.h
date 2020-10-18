@@ -78,6 +78,16 @@ typedef bool boolean;
 
 #endif // __cplusplus
 
+/* Official Arduino */
+#define INPUT         0x0
+#define OUTPUT              0x1
+#define INPUT_PULLUP        0x2
+/* STM32 extension */
+#define INPUT_FLOATING      INPUT
+#define INPUT_PULLDOWN      0x3
+#define INPUT_ANALOG        0x4
+#define OUTPUT_OPEN_DRAIN   0x5
+
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
 #define TWO_PI 6.283185307179586476925286766559
@@ -102,7 +112,7 @@ enum BitOrder {
 #define DEFAULT 1
 #define EXTERNAL 0
 
-//#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
@@ -133,7 +143,7 @@ enum BitOrder {
 
 typedef unsigned int word;
 
-typedef bool boolean;
+typedef bool boolean __attribute__((deprecated));
 
 typedef uint8_t byte ;
 

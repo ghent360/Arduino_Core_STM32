@@ -59,7 +59,7 @@ bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum Inter
   UNUSED(callback);
   UNUSED(mode);
 #endif
-return true;
+  return true;
 }
 
 

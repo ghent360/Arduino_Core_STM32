@@ -208,11 +208,12 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue)
       {
         //DIGITAL PIN ONLY
         // Defaults to digital write
+        pinMode(ulPin, OUTPUT);
         ulValue = mapResolution(ulValue, _writeResolution, 8);
         if (ulValue < 128) {
-          pinMode(ulPin, OUTPUT_LOW);
+          digitalWrite(ulPin, LOW);
         } else {
-          pinMode(ulPin, OUTPUT_HIGH);
+          digitalWrite(ulPin, HIGH);
         }
       }
   }

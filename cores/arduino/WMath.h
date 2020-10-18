@@ -19,15 +19,15 @@
 #ifndef _WIRING_MATH_
 #define _WIRING_MATH_
 
-#include <stdint.h>
-//#include <compiler.h>
+extern long random(long) ;
+extern long random(long, long) ;
+extern void randomSeed(uint32_t dwSeed) ;
+extern long map(long, long, long, long, long) ;
 
-#ifdef __cplusplus
-extern "C" uint32_t random32() noexcept;
-#else
-extern uint32_t random32() noexcept;
-#endif
+extern uint16_t makeWord(uint16_t w) ;
+extern uint16_t makeWord(uint8_t h, uint8_t l) ;
 
+#define word(...) makeWord(__VA_ARGS__)
 #ifdef __cplusplus
 
 #include <cmath>

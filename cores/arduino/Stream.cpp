@@ -22,12 +22,10 @@
  findMulti/findUntil routines written by Jim Leonard/Xuth
  */
 
-
 #include "Core.h"
 #include "Stream.h"
 
 #define PARSE_TIMEOUT 1000  // default number of milli-seconds to wait
-#define NO_SKIP_CHAR  1  // a magic char not found in a valid ASCII numeric field
 
 // private method to read stream with timeout
 int Stream::timedRead() noexcept
@@ -36,8 +34,10 @@ int Stream::timedRead() noexcept
   _startMillis = millis();
   do {
     c = read();
-    if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
+    if (c >= 0) {
+      return c;
+    }
+  } while (millis() - _startMillis < _timeout);
   return -1;     // -1 indicates timeout
 }
 
@@ -48,21 +48,41 @@ int Stream::timedPeek() noexcept
   _startMillis = millis();
   do {
     c = peek();
-    if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
+    if (c >= 0) {
+      return c;
+    }
+  } while (millis() - _startMillis < _timeout);
   return -1;     // -1 indicates timeout
 }
 
 // returns peek of the next digit in the stream or -1 if timeout
 // discards non-numeric characters
-int Stream::peekNextDigit() noexcept
+int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal) noexcept
 {
   int c;
   while (1) {
     c = timedPeek();
-    if (c < 0) return c;  // timeout
-    if (c == '-') return c;
-    if (c >= '0' && c <= '9') return c;
+
+    if (c < 0 ||
+        c == '-' ||
+        (c >= '0' && c <= '9') ||
+        (detectDecimal && c == '.')) {
+      return c;
+    }
+
+    switch (lookahead) {
+      case SKIP_NONE: return -1; // Fail code.
+      case SKIP_WHITESPACE:
+        switch (c) {
+          case ' ':
+          case '\t':
+          case '\r':
+          case '\n': break;
+          default: return -1; // Fail code.
+        }
+      case SKIP_ALL:
+        break;
+    }
     read();  // discard non-numeric
   }
 }
@@ -78,18 +98,18 @@ void Stream::setTimeout(unsigned long timeout) noexcept  // sets the maximum num
  // find returns true if the target string is found
 bool  Stream::find(char *target) noexcept
 {
-  return findUntil(target, (char*)"");
+  return findUntil(target, strlen(target), NULL, 0);
 }
 
 // reads data from the stream until the target string of given length is found
 // returns true if target string is found, false if timed out
-bool Stream::find(char *target, size_t length) noexcept
+bool Stream::find(const char *target, size_t length) noexcept
 {
   return findUntil(target, length, NULL, 0);
 }
 
 // as find but search ends if the terminator string is found
-bool  Stream::findUntil(char *target, char *terminator) noexcept
+bool  Stream::findUntil(const char *target, const char *terminator) noexcept
 {
   return findUntil(target, strlen(target), terminator, strlen(terminator));
 }
@@ -97,145 +117,90 @@ bool  Stream::findUntil(char *target, char *terminator) noexcept
 // reads data from the stream until the target string of the given length is found
 // search terminated if the terminator string is found
 // returns true if target string is found, false if terminated or timed out
-bool Stream::findUntil(char *target, size_t targetLen, char *terminator, size_t termLen) noexcept
+bool Stream::findUntil(char *target, size_t targetLen, const char *terminator, size_t termLen) noexcept
 {
-  size_t index = 0;  // maximum target string length is 64k bytes!
-  size_t termIndex = 0;
-  int c;
-
-  if( *target == 0)
-    return true;   // return true if target is a null string
-  while( (c = timedRead()) > 0){
-
-    if(c != target[index])
-      index = 0; // reset index if any char does not match
-
-    if( c == target[index]){
-      //////Serial.print("found "); Serial.write(c); Serial.print("index now"); Serial.println(index+1);
-      if(++index >= targetLen){ // return true if all chars in the target match
-        return true;
-      }
-    }
-
-    if(termLen > 0 && c == terminator[termIndex]){
-      if(++termIndex >= termLen)
-        return false;       // return false if terminate string found before target string
-    }
-    else
-      termIndex = 0;
+  if (terminator == NULL) {
+    MultiTarget t[1] = {{target, targetLen, 0}};
+    return findMulti(t, 1) == 0 ? true : false;
+  } else {
+    MultiTarget t[2] = {{target, targetLen, 0}, {terminator, termLen, 0}};
+    return findMulti(t, 2) == 0 ? true : false;
   }
-  return false;
 }
-
 
 // returns the first valid (long) integer value from the current position.
-// initial characters that are not digits (or the minus sign) are skipped
-// function is terminated by the first character that is not a digit.
-long Stream::parseInt() noexcept
+// lookahead determines how parseInt looks ahead in the stream.
+// See LookaheadMode enumeration at the top of the file.
+// Lookahead is terminated by the first character that is not a valid part of an integer.
+// Once parsing commences, 'ignore' will be skipped in the stream.
+long Stream::parseInt(LookaheadMode lookahead, char ignore) noexcept
 {
-  return parseInt(NO_SKIP_CHAR); // terminate on first non-digit character (or timeout)
-}
-
-// as above but a given skipChar is ignored
-// this allows format characters (typically commas) in values to be ignored
-long Stream::parseInt(char skipChar) noexcept
-{
-  boolean isNegative = false;
+  bool isNegative = false;
   long value = 0;
+  int c;
 
-  int c = peekNextDigit();
+  c = peekNextDigit(lookahead, false);
   // ignore non numeric leading characters
-  if(c < 0)
-  {
-    return 0; // zero returned if timeout
+  if (c < 0) {
+    return 0;  // zero returned if timeout
   }
 
-  do
-  {
-    if (c == skipChar)
-    {
-      // ignore this charactor
-    }
-    else if (c == '-')
-    {
+  do {
+    if (c == ignore)
+      ; // ignore this character
+    else if (c == '-') {
       isNegative = true;
-    }
-    else if (c >= '0' && c <= '9')        // is c a digit?
-    {
+    } else if (c >= '0' && c <= '9') {   // is c a digit?
       value = value * 10 + c - '0';
     }
     read();  // consume the character we got with peek
     c = timedPeek();
-  }
-  while( (c >= '0' && c <= '9') || c == skipChar );
+  } while ((c >= '0' && c <= '9') || c == ignore);
 
-  if (isNegative)
-  {
+  if (isNegative) {
     value = -value;
   }
   return value;
 }
 
-
 // as parseInt but returns a floating point value
-float Stream::parseFloat() noexcept
+float Stream::parseFloat(LookaheadMode lookahead, char ignore) noexcept
 {
-  return parseFloat(NO_SKIP_CHAR);
-}
-
-// as above but the given skipChar is ignored
-// this allows format characters (typically commas) in values to be ignored
-float Stream::parseFloat(char skipChar) noexcept
-{
-  boolean isNegative = false;
-  boolean isFraction = false;
+  bool isNegative = false;
+  bool isFraction = false;
   long value = 0;
+  int c;
   float fraction = 1.0;
 
-  int c = peekNextDigit();
+  c = peekNextDigit(lookahead, true);
     // ignore non numeric leading characters
-  if (c < 0)
-  {
-    return 0; // zero returned if timeout
+  if (c < 0) {
+    return 0;  // zero returned if timeout
   }
 
-  do
-  {
-    if (c == skipChar)
-    {
-      // ignore
-    }
-    else if (c == '-')
-    {
+  do {
+    if (c == ignore)
+      ; // ignore
+    else if (c == '-') {
       isNegative = true;
-    }
-    else if (c == '.')
-    {
+    } else if (c == '.') {
       isFraction = true;
-    }
-    else if (c >= '0' && c <= '9')      // is c a digit?
-    {
+    } else if (c >= '0' && c <= '9')  {   // is c a digit?
       value = value * 10 + c - '0';
-      if (isFraction)
-      {
+      if (isFraction) {
          fraction *= 0.1;
       }
     }
     read();  // consume the character we got with peek
     c = timedPeek();
-  }
-  while( (c >= '0' && c <= '9') || c == '.' || c == skipChar );
+  } while ((c >= '0' && c <= '9')  || (c == '.' && !isFraction) || c == ignore);
 
-  if (isNegative)
-  {
+  if (isNegative) {
     value = -value;
   }
-  if (isFraction)
-  {
+  if (isFraction) {
     return value * fraction;
-  }
-  else
-  {
+  } else {
     return value;
   }
 }
@@ -248,10 +213,11 @@ float Stream::parseFloat(char skipChar) noexcept
 size_t Stream::readBytes(char *buffer, size_t length) noexcept
 {
   size_t count = 0;
-  while (count < length)
-  {
+  while (count < length) {
     int c = timedRead();
-    if (c < 0) break;
+    if (c < 0) {
+      break;
+    }
     *buffer++ = (char)c;
     count++;
   }
@@ -265,11 +231,15 @@ size_t Stream::readBytes(char *buffer, size_t length) noexcept
 
 size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length) noexcept
 {
-  if (length < 1) return 0;
+  if (length < 1) {
+    return 0;
+  }
   size_t index = 0;
   while (index < length) {
     int c = timedRead();
-    if (c < 0 || c == terminator) break;
+    if (c < 0 || c == terminator) {
+      break;
+    }
     *buffer++ = (char)c;
     index++;
   }
