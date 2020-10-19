@@ -78,28 +78,28 @@ class SoftwareSerial : public Stream {
     static uint32_t cur_speed;
 
     // private methods
-    void send();
-    void recv();
-    void setTX();
-    void setRX();
-    void setSpeed(uint32_t speed);
-    void setRXTX(bool input);
-    static void handleInterrupt();
+    void send() noexcept;
+    void recv() noexcept;
+    void setTX() noexcept;
+    void setRX() noexcept;
+    void setSpeed(uint32_t speed) noexcept;
+    void setRXTX(bool input) noexcept;
+    static void handleInterrupt() noexcept;
 
   public:
     // public methods
 
-    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false);
+    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false) noexcept;
     virtual ~SoftwareSerial();
-    void begin(long speed);
-    bool listen();
-    void end();
-    bool isListening()
+    void begin(long speed) noexcept;
+    bool listen() noexcept;
+    void end() noexcept;
+    bool isListening() noexcept
     {
       return active_listener == this;
     }
-    bool stopListening();
-    bool overflow()
+    bool stopListening() noexcept;
+    bool overflow() noexcept
     {
       bool ret = _buffer_overflow;
       if (ret) {
@@ -107,18 +107,18 @@ class SoftwareSerial : public Stream {
       }
       return ret;
     }
-    int peek();
+    int peek() noexcept;
 
-    virtual size_t write(uint8_t byte);
-    virtual int read();
-    virtual int available();
-    virtual void flush();
-    operator bool()
+    virtual size_t write(uint8_t byte) noexcept;
+    virtual int read() noexcept;
+    virtual int available() noexcept;
+    virtual void flush() noexcept;
+    operator bool() noexcept
     {
       return true;
     }
 
-    static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority);
+    static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority) noexcept;
 
     using Print::write;
 };

@@ -111,7 +111,7 @@ uint32_t SoftwareSerial::cur_speed = 0;
 // Private methods
 //
 
-void SoftwareSerial::setSpeed(uint32_t speed)
+void SoftwareSerial::setSpeed(uint32_t speed) noexcept
 {
   if (speed != cur_speed) {
     timer.pause();
@@ -143,7 +143,7 @@ void SoftwareSerial::setSpeed(uint32_t speed)
 
 // This function sets the current object as the "listening"
 // one and returns true if it replaces another
-bool SoftwareSerial::listen()
+bool SoftwareSerial::listen() noexcept
 {
   if (active_listener != this) {
     // wait for any transmit to complete as we may change speed
@@ -162,7 +162,7 @@ bool SoftwareSerial::listen()
 }
 
 // Stop listening. Returns true if we were actually listening.
-bool SoftwareSerial::stopListening()
+bool SoftwareSerial::stopListening() noexcept
 {
   if (active_listener == this) {
     // wait for any output to complete
@@ -179,7 +179,7 @@ bool SoftwareSerial::stopListening()
   return false;
 }
 
-inline void SoftwareSerial::setTX()
+inline void SoftwareSerial::setTX() noexcept
 {
   if (_inverse_logic) {
     LL_GPIO_ResetOutputPin(_transmitPinPort, _transmitPinNumber);
@@ -189,12 +189,12 @@ inline void SoftwareSerial::setTX()
   pinMode(_transmitPin, OUTPUT);
 }
 
-inline void SoftwareSerial::setRX()
+inline void SoftwareSerial::setRX() noexcept
 {
   pinMode(_receivePin, _inverse_logic ? INPUT_PULLDOWN : INPUT_PULLUP); // pullup for normal logic!
 }
 
-inline void SoftwareSerial::setRXTX(bool input)
+inline void SoftwareSerial::setRXTX(bool input) noexcept
 {
   if (_half_duplex) {
     if (input) {
@@ -213,7 +213,7 @@ inline void SoftwareSerial::setRXTX(bool input)
   }
 }
 
-inline void SoftwareSerial::send()
+inline void SoftwareSerial::send() noexcept
 {
   if (--tx_tick_cnt <= 0) { // if tx_tick_cnt > 0 interrupt is discarded. Only when tx_tick_cnt reach 0 we set TX pin.
     if (tx_bit_cnt++ < 10) { // tx_bit_cnt < 10 transmission is not fiisehed (10 = 1 start +8 bits + 1 stop)
@@ -245,7 +245,7 @@ inline void SoftwareSerial::send()
 //
 // The receive routine called by the interrupt handler
 //
-inline void SoftwareSerial::recv()
+inline void SoftwareSerial::recv() noexcept
 {
   if (--rx_tick_cnt <= 0) { // if rx_tick_cnt > 0 interrupt is discarded. Only when rx_tick_cnt reach 0 RX pin is considered
     bool inbit = LL_GPIO_IsInputPinSet(_receivePinPort, _receivePinNumber) ^ _inverse_logic;
@@ -290,7 +290,7 @@ inline void SoftwareSerial::recv()
 //
 
 /* static */
-inline void SoftwareSerial::handleInterrupt()
+inline void SoftwareSerial::handleInterrupt() noexcept
 {
   if (active_in) {
     active_in->recv();
@@ -302,7 +302,10 @@ inline void SoftwareSerial::handleInterrupt()
 //
 // Constructor
 //
-SoftwareSerial::SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic /* = false */) :
+SoftwareSerial::SoftwareSerial(
+  uint16_t receivePin, 
+  uint16_t transmitPin, 
+  bool inverse_logic /* = false */) noexcept :
   _receivePin(receivePin),
   _transmitPin(transmitPin),
   _receivePinPort(digitalPinToPort(receivePin)),
@@ -338,7 +341,7 @@ SoftwareSerial::~SoftwareSerial()
 // Public methods
 //
 
-void SoftwareSerial::begin(long speed)
+void SoftwareSerial::begin(long speed) noexcept
 {
 #ifdef FORCE_BAUD_RATE
   speed = FORCE_BAUD_RATE;
@@ -353,13 +356,13 @@ void SoftwareSerial::begin(long speed)
   }
 }
 
-void SoftwareSerial::end()
+void SoftwareSerial::end() noexcept
 {
   stopListening();
 }
 
 // Read data from buffer
-int SoftwareSerial::read()
+int SoftwareSerial::read() noexcept
 {
   // Empty buffer?
   if (_receive_buffer_head == _receive_buffer_tail) {
@@ -372,12 +375,12 @@ int SoftwareSerial::read()
   return d;
 }
 
-int SoftwareSerial::available()
+int SoftwareSerial::available() noexcept
 {
   return (_receive_buffer_tail + _SS_MAX_RX_BUFF - _receive_buffer_head) % _SS_MAX_RX_BUFF;
 }
 
-size_t SoftwareSerial::write(uint8_t b)
+size_t SoftwareSerial::write(uint8_t b) noexcept
 {
   // wait for previous transmit to complete
   _output_pending = 1;
@@ -400,14 +403,14 @@ size_t SoftwareSerial::write(uint8_t b)
   return 1;
 }
 
-void SoftwareSerial::flush()
+void SoftwareSerial::flush() noexcept
 {
   noInterrupts();
   _receive_buffer_head = _receive_buffer_tail = 0;
   interrupts();
 }
 
-int SoftwareSerial::peek()
+int SoftwareSerial::peek() noexcept
 {
   // Empty buffer?
   if (_receive_buffer_head == _receive_buffer_tail) {
@@ -418,7 +421,7 @@ int SoftwareSerial::peek()
   return _receive_buffer[_receive_buffer_head];
 }
 
-void SoftwareSerial::setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority)
+void SoftwareSerial::setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority) noexcept
 {
   timer.setInterruptPriority(preemptPriority, subPriority);
 }

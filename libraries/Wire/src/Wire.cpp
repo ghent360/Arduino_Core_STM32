@@ -29,13 +29,13 @@ extern "C" {
 
 // Constructors ////////////////////////////////////////////////////////////////
 
-TwoWire::TwoWire()
+TwoWire::TwoWire() noexcept
 {
   _i2c.sda = digitalPinToPinName(SDA);
   _i2c.scl = digitalPinToPinName(SCL);
 }
 
-TwoWire::TwoWire(uint8_t sda, uint8_t scl)
+TwoWire::TwoWire(uint8_t sda, uint8_t scl) noexcept
 {
   _i2c.sda = digitalPinToPinName(sda);
   _i2c.scl = digitalPinToPinName(scl);
@@ -43,19 +43,19 @@ TwoWire::TwoWire(uint8_t sda, uint8_t scl)
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void TwoWire::begin(uint8_t sda, uint8_t scl)
+void TwoWire::begin(uint8_t sda, uint8_t scl) noexcept
 {
   _i2c.sda = digitalPinToPinName(sda);
   _i2c.scl = digitalPinToPinName(scl);
   begin();
 }
 
-void TwoWire::begin(bool generalCall)
+void TwoWire::begin(bool generalCall) noexcept
 {
   begin(MASTER_ADDRESS, generalCall);
 }
 
-void TwoWire::begin(uint8_t address, bool generalCall)
+void TwoWire::begin(uint8_t address, bool generalCall) noexcept
 {
   rxBufferIndex = 0;
   rxBufferLength = 0;
@@ -91,12 +91,12 @@ void TwoWire::begin(uint8_t address, bool generalCall)
   }
 }
 
-void TwoWire::begin(int address, bool generalCall)
+void TwoWire::begin(int address, bool generalCall) noexcept
 {
   begin((uint8_t)address, generalCall);
 }
 
-void TwoWire::end(void)
+void TwoWire::end(void) noexcept
 {
   i2c_deinit(&_i2c);
   free(txBuffer);
@@ -107,12 +107,17 @@ void TwoWire::end(void)
   rxBufferAllocated = 0;
 }
 
-void TwoWire::setClock(uint32_t frequency)
+void TwoWire::setClock(uint32_t frequency) noexcept
 {
   i2c_setTiming(&_i2c, frequency);
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop)
+uint8_t TwoWire::requestFrom(
+  uint8_t address,
+  uint8_t quantity,
+  uint32_t iaddress,
+  uint8_t isize,
+  uint8_t sendStop) noexcept
 {
 #if !defined(I2C_OTHER_FRAME)
   UNUSED(sendStop);
@@ -167,27 +172,27 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
   return read;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop)
+uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop) noexcept
 {
   return requestFrom((uint8_t)address, (uint8_t)quantity, (uint32_t)0, (uint8_t)0, (uint8_t)sendStop);
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity)
+uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity) noexcept
 {
   return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
 }
 
-uint8_t TwoWire::requestFrom(int address, int quantity)
+uint8_t TwoWire::requestFrom(int address, int quantity) noexcept
 {
   return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
 }
 
-uint8_t TwoWire::requestFrom(int address, int quantity, int sendStop)
+uint8_t TwoWire::requestFrom(int address, int quantity, int sendStop) noexcept
 {
   return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)sendStop);
 }
 
-void TwoWire::beginTransmission(uint8_t address)
+void TwoWire::beginTransmission(uint8_t address) noexcept
 {
   // indicate that we are transmitting
   transmitting = 1;
@@ -198,7 +203,7 @@ void TwoWire::beginTransmission(uint8_t address)
   txBufferLength = 0;
 }
 
-void TwoWire::beginTransmission(int address)
+void TwoWire::beginTransmission(int address) noexcept
 {
   beginTransmission((uint8_t)address);
 }
@@ -216,7 +221,7 @@ void TwoWire::beginTransmission(int address)
 //  no call to endTransmission(true) is made. Some I2C
 //  devices will behave oddly if they do not see a STOP.
 //
-uint8_t TwoWire::endTransmission(uint8_t sendStop)
+uint8_t TwoWire::endTransmission(uint8_t sendStop) noexcept
 {
 #if !defined(I2C_OTHER_FRAME)
   UNUSED(sendStop);
@@ -270,7 +275,7 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
 //  This provides backwards compatibility with the original
 //  definition, and expected behaviour, of endTransmission
 //
-uint8_t TwoWire::endTransmission(void)
+uint8_t TwoWire::endTransmission(void) noexcept
 {
   return endTransmission((uint8_t)true);
 }
@@ -278,7 +283,7 @@ uint8_t TwoWire::endTransmission(void)
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-size_t TwoWire::write(uint8_t data)
+size_t TwoWire::write(uint8_t data) noexcept
 {
   size_t ret = 1;
   if (transmitting) {
@@ -312,7 +317,7 @@ size_t TwoWire::write(uint8_t data)
   * @param  quantity: number of bytes to write
   * @retval number of bytes ready to write.
   */
-size_t TwoWire::write(const uint8_t *data, size_t quantity)
+size_t TwoWire::write(const uint8_t *data, size_t quantity) noexcept
 {
   size_t ret = quantity;
 
@@ -343,7 +348,7 @@ size_t TwoWire::write(const uint8_t *data, size_t quantity)
 // must be called in:
 // slave rx event callback
 // or after requestFrom(address, numBytes)
-int TwoWire::available(void)
+int TwoWire::available(void) noexcept
 {
   return rxBufferLength - rxBufferIndex;
 }
@@ -351,7 +356,7 @@ int TwoWire::available(void)
 // must be called in:
 // slave rx event callback
 // or after requestFrom(address, numBytes)
-int TwoWire::read(void)
+int TwoWire::read(void) noexcept
 {
   int value = -1;
 
@@ -373,7 +378,7 @@ int TwoWire::read(void)
 // must be called in:
 // slave rx event callback
 // or after requestFrom(address, numBytes)
-int TwoWire::peek(void)
+int TwoWire::peek(void) noexcept
 {
   int value = -1;
 
@@ -394,7 +399,7 @@ void TwoWire::flush(void)
 }
 
 // behind the scenes function that is called when data is received
-void TwoWire::onReceiveService(i2c_t *obj)
+void TwoWire::onReceiveService(i2c_t *obj) noexcept
 {
   uint8_t *inBytes = (uint8_t *) obj->i2cTxRxBuffer;
   int numBytes = obj->slaveRxNbData;
@@ -427,7 +432,7 @@ void TwoWire::onReceiveService(i2c_t *obj)
 }
 
 // behind the scenes function that is called when data is requested
-void TwoWire::onRequestService(i2c_t *obj)
+void TwoWire::onRequestService(i2c_t *obj) noexcept
 {
   TwoWire *TW = (TwoWire *)(obj->__this);
 
@@ -443,13 +448,13 @@ void TwoWire::onRequestService(i2c_t *obj)
 }
 
 // sets function called on slave write
-void TwoWire::onReceive(void (*function)(int))
+void TwoWire::onReceive(void (*function)(int) noexcept) noexcept
 {
   user_onReceive = function;
 }
 
 // sets function called on slave read
-void TwoWire::onRequest(void (*function)(void))
+void TwoWire::onRequest(void (*function)(void) noexcept) noexcept
 {
   user_onRequest = function;
 }
@@ -459,7 +464,7 @@ void TwoWire::onRequest(void (*function)(void))
   * @note   Minimum allocated size is BUFFER_LENGTH)
   * @param  length: number of bytes to allocate
   */
-void TwoWire::allocateRxBuffer(size_t length)
+void TwoWire::allocateRxBuffer(size_t length) noexcept
 {
   if (rxBufferAllocated < length) {
     // By default we allocate BUFFER_LENGTH bytes. It is the min size of the buffer.
@@ -476,7 +481,7 @@ void TwoWire::allocateRxBuffer(size_t length)
   }
 }
 
-inline void TwoWire::allocateTxBuffer(size_t length)
+inline void TwoWire::allocateTxBuffer(size_t length) noexcept
 {
   if (txBufferAllocated < length) {
     // By default we allocate BUFFER_LENGTH bytes. It is the min size of the buffer.
@@ -496,14 +501,14 @@ inline void TwoWire::allocateTxBuffer(size_t length)
 /**
   * @brief  Reset Rx/Tx buffer content to 0
   */
-inline void TwoWire::resetRxBuffer(void)
+inline void TwoWire::resetRxBuffer(void) noexcept
 {
   if (rxBuffer != nullptr) {
     memset(rxBuffer, 0, rxBufferAllocated);
   }
 }
 
-inline void TwoWire::resetTxBuffer(void)
+inline void TwoWire::resetTxBuffer(void) noexcept
 {
   if (txBuffer != nullptr) {
     memset(txBuffer, 0, txBufferAllocated);
