@@ -89,7 +89,7 @@ build.virtio_flags=-DVIRTIOCON -DHAL_IPCC_MODULE_ENABLED -DNO_ATOMIC_64_SUPPORT 
 build.virtio_extra_include="-I{build.system.path}/Middlewares/OpenAMP" "-I{build.system.path}/Middlewares/OpenAMP/open-amp/lib/include" "-I{build.system.path}/Middlewares/OpenAMP/libmetal/lib/include" "-I{build.system.path}/Middlewares/OpenAMP/virtual_driver"
 
 # Build information's
-build.info.flags=-D{build.series} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DBOARD_NAME="{build.board}" -Dnoexcept=
+build.info.flags=-D{build.series} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DBOARD_NAME="{build.board}" -DNOEXCEPT=
 
 # Defaults config
 build.xSerial=-DHAL_UART_MODULE_ENABLED

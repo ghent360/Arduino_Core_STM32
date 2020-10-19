@@ -44,9 +44,6 @@
 extern "C" {
 #endif
 
-// ADC functionality replaced with RRF by AnalogIn
-#undef HAL_ADC_MODULE_ENABLED
-
 /* Private_Variables */
 #if (defined(HAL_ADC_MODULE_ENABLED) && !defined(HAL_ADC_MODULE_ONLY)) ||\
     (defined(HAL_DAC_MODULE_ENABLED) && !defined(HAL_DAC_MODULE_ONLY))

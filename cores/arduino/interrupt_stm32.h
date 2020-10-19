@@ -89,7 +89,7 @@ inline void SetBasePriority(uint32_t prio)
 class AtomicCriticalSectionLocker
 {
 public:
-    AtomicCriticalSectionLocker() noexcept : flags(cpu_irq_save())
+    AtomicCriticalSectionLocker() NOEXCEPT : flags(cpu_irq_save())
     {
     }
 

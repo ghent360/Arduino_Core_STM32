@@ -23,7 +23,7 @@
 //extern void __libc_init_array(void);
 //extern void init(void);
 extern "C" void UrgentInit(void);
-extern "C" void AppMain() noexcept;
+extern "C" void AppMain() NOEXCEPT;
 
 
 // Weak empty variant initialization function.
@@ -73,4 +73,9 @@ int main(void)
   }
 
   return 0;
+}
+
+void assert_failed(uint8_t* file, uint32_t line) __attribute__((weak));
+void assert_failed(uint8_t* file, uint32_t line) {
+  _Error_Handler(reinterpret_cast<const char*>(file), line);
 }

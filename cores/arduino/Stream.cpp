@@ -28,7 +28,7 @@
 #define PARSE_TIMEOUT 1000  // default number of milli-seconds to wait
 
 // private method to read stream with timeout
-int Stream::timedRead() noexcept
+int Stream::timedRead() NOEXCEPT
 {
   int c;
   _startMillis = millis();
@@ -42,7 +42,7 @@ int Stream::timedRead() noexcept
 }
 
 // private method to peek stream with timeout
-int Stream::timedPeek() noexcept
+int Stream::timedPeek() NOEXCEPT
 {
   int c;
   _startMillis = millis();
@@ -57,7 +57,7 @@ int Stream::timedPeek() noexcept
 
 // returns peek of the next digit in the stream or -1 if timeout
 // discards non-numeric characters
-int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal) noexcept
+int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal) NOEXCEPT
 {
   int c;
   while (1) {
@@ -90,26 +90,26 @@ int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal) noexcept
 // Public Methods
 //////////////////////////////////////////////////////////////
 
-void Stream::setTimeout(unsigned long timeout) noexcept  // sets the maximum number of milliseconds to wait
+void Stream::setTimeout(unsigned long timeout) NOEXCEPT  // sets the maximum number of milliseconds to wait
 {
   _timeout = timeout;
 }
 
  // find returns true if the target string is found
-bool Stream::find(const char *target) noexcept
+bool Stream::find(const char *target) NOEXCEPT
 {
   return findUntil(target, strlen(target), NULL, 0);
 }
 
 // reads data from the stream until the target string of given length is found
 // returns true if target string is found, false if timed out
-bool Stream::find(const char *target, size_t length) noexcept
+bool Stream::find(const char *target, size_t length) NOEXCEPT
 {
   return findUntil(target, length, NULL, 0);
 }
 
 // as find but search ends if the terminator string is found
-bool  Stream::findUntil(const char *target, const char *terminator) noexcept
+bool  Stream::findUntil(const char *target, const char *terminator) NOEXCEPT
 {
   return findUntil(target, strlen(target), terminator, strlen(terminator));
 }
@@ -117,7 +117,7 @@ bool  Stream::findUntil(const char *target, const char *terminator) noexcept
 // reads data from the stream until the target string of the given length is found
 // search terminated if the terminator string is found
 // returns true if target string is found, false if terminated or timed out
-bool Stream::findUntil(const char *target, size_t targetLen, const char *terminator, size_t termLen) noexcept
+bool Stream::findUntil(const char *target, size_t targetLen, const char *terminator, size_t termLen) NOEXCEPT
 {
   if (terminator == NULL) {
     MultiTarget t[1] = {{target, targetLen, 0}};
@@ -133,7 +133,7 @@ bool Stream::findUntil(const char *target, size_t targetLen, const char *termina
 // See LookaheadMode enumeration at the top of the file.
 // Lookahead is terminated by the first character that is not a valid part of an integer.
 // Once parsing commences, 'ignore' will be skipped in the stream.
-long Stream::parseInt(LookaheadMode lookahead, char ignore) noexcept
+long Stream::parseInt(LookaheadMode lookahead, char ignore) NOEXCEPT
 {
   bool isNegative = false;
   long value = 0;
@@ -164,7 +164,7 @@ long Stream::parseInt(LookaheadMode lookahead, char ignore) noexcept
 }
 
 // as parseInt but returns a floating point value
-float Stream::parseFloat(LookaheadMode lookahead, char ignore) noexcept
+float Stream::parseFloat(LookaheadMode lookahead, char ignore) NOEXCEPT
 {
   bool isNegative = false;
   bool isFraction = false;
@@ -210,7 +210,7 @@ float Stream::parseFloat(LookaheadMode lookahead, char ignore) noexcept
 // returns the number of characters placed in the buffer
 // the buffer is NOT null terminated.
 //
-size_t Stream::readBytes(char *buffer, size_t length) noexcept
+size_t Stream::readBytes(char *buffer, size_t length) NOEXCEPT
 {
   size_t count = 0;
   while (count < length) {
@@ -229,7 +229,7 @@ size_t Stream::readBytes(char *buffer, size_t length) noexcept
 // terminates if length characters have been read, timeout, or if the terminator character  detected
 // returns the number of characters placed in the buffer (0 means no valid data found)
 
-size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length) noexcept
+size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length) NOEXCEPT
 {
   if (length < 1) {
     return 0;
@@ -246,7 +246,7 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length) noex
   return index; // return number of characters, not including null terminator
 }
 
-String Stream::readString() noexcept
+String Stream::readString() NOEXCEPT
 {
   String ret;
   int c = timedRead();
@@ -257,7 +257,7 @@ String Stream::readString() noexcept
   return ret;
 }
 
-String Stream::readStringUntil(char terminator) noexcept
+String Stream::readStringUntil(char terminator) NOEXCEPT
 {
   String ret;
   int c = timedRead();
@@ -268,7 +268,7 @@ String Stream::readStringUntil(char terminator) noexcept
   return ret;
 }
 
-int Stream::findMulti(struct Stream::MultiTarget *targets, int tCount) noexcept
+int Stream::findMulti(struct Stream::MultiTarget *targets, int tCount) NOEXCEPT
 {
   // any zero length target string automatically matches and would make
   // a mess of the rest of the algorithm.

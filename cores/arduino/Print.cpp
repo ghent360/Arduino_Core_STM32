@@ -31,7 +31,7 @@
 // Public Methods //////////////////////////////////////////////////////////////
 
 /* default implementation: may be overridden */
-size_t Print::write(const uint8_t *buffer, size_t size) noexcept
+size_t Print::write(const uint8_t *buffer, size_t size) NOEXCEPT
 {
   size_t n = 0;
   while (size--) {
@@ -44,42 +44,42 @@ size_t Print::write(const uint8_t *buffer, size_t size) noexcept
   return n;
 }
 
-size_t Print::print(const __FlashStringHelper *ifsh) noexcept
+size_t Print::print(const __FlashStringHelper *ifsh) NOEXCEPT
 {
   return print(reinterpret_cast<const char *>(ifsh));
 }
 
-size_t Print::print(const String &s) noexcept
+size_t Print::print(const String &s) NOEXCEPT
 {
   return write(s.c_str(), s.length());
 }
 
-size_t Print::print(const char str[]) noexcept
+size_t Print::print(const char str[]) NOEXCEPT
 {
   return write(str);
 }
 
-size_t Print::print(char c) noexcept
+size_t Print::print(char c) NOEXCEPT
 {
   return write(c);
 }
 
-size_t Print::print(unsigned char b, int base) noexcept
+size_t Print::print(unsigned char b, int base) NOEXCEPT
 {
   return print((unsigned long) b, base);
 }
 
-size_t Print::print(int n, int base) noexcept
+size_t Print::print(int n, int base) NOEXCEPT
 {
   return print((long) n, base);
 }
 
-size_t Print::print(unsigned int n, int base) noexcept
+size_t Print::print(unsigned int n, int base) NOEXCEPT
 {
   return print((unsigned long) n, base);
 }
 
-size_t Print::print(long n, int base) noexcept
+size_t Print::print(long n, int base) NOEXCEPT
 {
   if (base == 0) {
     return write(n);
@@ -95,7 +95,7 @@ size_t Print::print(long n, int base) noexcept
   }
 }
 
-size_t Print::print(unsigned long n, int base) noexcept
+size_t Print::print(unsigned long n, int base) NOEXCEPT
 {
   if (base == 0) {
     return write(n);
@@ -104,7 +104,7 @@ size_t Print::print(unsigned long n, int base) noexcept
   }
 }
 
-size_t Print::print(long long n, int base) noexcept
+size_t Print::print(long long n, int base) NOEXCEPT
 {
   if (base == 0) {
     return write(n);
@@ -120,7 +120,7 @@ size_t Print::print(long long n, int base) noexcept
   }
 }
 
-size_t Print::print(unsigned long long n, int base) noexcept
+size_t Print::print(unsigned long long n, int base) NOEXCEPT
 {
   if (base == 0) {
     return write(n);
@@ -129,106 +129,106 @@ size_t Print::print(unsigned long long n, int base) noexcept
   }
 }
 
-size_t Print::print(double n, int digits) noexcept
+size_t Print::print(double n, int digits) NOEXCEPT
 {
   return printFloat(n, digits);
 }
 
-size_t Print::println(const __FlashStringHelper *ifsh) noexcept
+size_t Print::println(const __FlashStringHelper *ifsh) NOEXCEPT
 {
   size_t n = print(ifsh);
   n += println();
   return n;
 }
 
-size_t Print::print(const Printable &x) noexcept
+size_t Print::print(const Printable &x) NOEXCEPT
 {
   return x.printTo(*this);
 }
 
-size_t Print::println(void) noexcept
+size_t Print::println(void) NOEXCEPT
 {
   return write("\r\n");
 }
 
-size_t Print::println(const String &s) noexcept
+size_t Print::println(const String &s) NOEXCEPT
 {
   size_t n = print(s);
   n += println();
   return n;
 }
 
-size_t Print::println(const char c[]) noexcept
+size_t Print::println(const char c[]) NOEXCEPT
 {
   size_t n = print(c);
   n += println();
   return n;
 }
 
-size_t Print::println(char c) noexcept
+size_t Print::println(char c) NOEXCEPT
 {
   size_t n = print(c);
   n += println();
   return n;
 }
 
-size_t Print::println(unsigned char b, int base) noexcept
+size_t Print::println(unsigned char b, int base) NOEXCEPT
 {
   size_t n = print(b, base);
   n += println();
   return n;
 }
 
-size_t Print::println(int num, int base) noexcept
+size_t Print::println(int num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(unsigned int num, int base) noexcept
+size_t Print::println(unsigned int num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(long num, int base) noexcept
+size_t Print::println(long num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(unsigned long num, int base) noexcept
+size_t Print::println(unsigned long num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(long long num, int base) noexcept
+size_t Print::println(long long num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(unsigned long long num, int base) noexcept
+size_t Print::println(unsigned long long num, int base) NOEXCEPT
 {
   size_t n = print(num, base);
   n += println();
   return n;
 }
 
-size_t Print::println(double num, int digits) noexcept
+size_t Print::println(double num, int digits) NOEXCEPT
 {
   size_t n = print(num, digits);
   n += println();
   return n;
 }
 
-size_t Print::println(const Printable &x) noexcept
+size_t Print::println(const Printable &x) NOEXCEPT
 {
   size_t n = print(x);
   n += println();
@@ -259,14 +259,14 @@ extern "C" {
   }
 }
 
-int Print::printf(const char *format, ...) noexcept
+int Print::printf(const char *format, ...) NOEXCEPT
 {
   va_list ap;
   va_start(ap, format);
   return vdprintf((int)this, format, ap);
 }
 
-int Print::printf(const __FlashStringHelper *format, ...) noexcept
+int Print::printf(const __FlashStringHelper *format, ...) NOEXCEPT
 {
   va_list ap;
   va_start(ap, format);
@@ -275,7 +275,7 @@ int Print::printf(const __FlashStringHelper *format, ...) noexcept
 
 // Private Methods /////////////////////////////////////////////////////////////
 
-size_t Print::printNumber(unsigned long n, uint8_t base) noexcept
+size_t Print::printNumber(unsigned long n, uint8_t base) NOEXCEPT
 {
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
@@ -341,7 +341,7 @@ void Print::printULLNumber(uint64_t n, uint8_t base)
 // }
 
 // FAST IMPLEMENTATION FOR ULL
-size_t Print::printULLNumber(unsigned long long n64, uint8_t base) noexcept
+size_t Print::printULLNumber(unsigned long long n64, uint8_t base) NOEXCEPT
 {
   // if limited to base 10 and 16 the bufsize can be 20
   char buf[64];
@@ -391,7 +391,7 @@ size_t Print::printULLNumber(unsigned long long n64, uint8_t base) noexcept
   return bytes;
 }
 
-size_t Print::printFloat(double number, uint8_t digits) noexcept
+size_t Print::printFloat(double number, uint8_t digits) NOEXCEPT
 {
   size_t n = 0;
 

@@ -55,72 +55,72 @@ class TwoWire : public Stream {
 
     void (*user_onRequest)(void);
     void (*user_onReceive)(int);
-    static void onRequestService(i2c_t *) noexcept;
-    static void onReceiveService(i2c_t *) noexcept;
+    static void onRequestService(i2c_t *) NOEXCEPT;
+    static void onReceiveService(i2c_t *) NOEXCEPT;
 
-    void allocateRxBuffer(size_t length) noexcept;
-    void allocateTxBuffer(size_t length) noexcept;
+    void allocateRxBuffer(size_t length) NOEXCEPT;
+    void allocateTxBuffer(size_t length) NOEXCEPT;
 
-    void resetRxBuffer(void) noexcept;
-    void resetTxBuffer(void) noexcept;
+    void resetRxBuffer(void) NOEXCEPT;
+    void resetTxBuffer(void) NOEXCEPT;
 
   public:
-    TwoWire() noexcept;
-    TwoWire(uint8_t sda, uint8_t scl) noexcept;
+    TwoWire() NOEXCEPT;
+    TwoWire(uint8_t sda, uint8_t scl) NOEXCEPT;
     // setSCL/SDA have to be called before begin()
-    void setSCL(uint32_t scl) noexcept
+    void setSCL(uint32_t scl) NOEXCEPT
     {
       _i2c.scl = digitalPinToPinName(scl);
     };
-    void setSDA(uint32_t sda) noexcept
+    void setSDA(uint32_t sda) NOEXCEPT
     {
       _i2c.sda = digitalPinToPinName(sda);
     };
-    void setSCL(PinName scl) noexcept
+    void setSCL(PinName scl) NOEXCEPT
     {
       _i2c.scl = scl;
     };
-    void setSDA(PinName sda) noexcept
+    void setSDA(PinName sda) NOEXCEPT
     {
       _i2c.sda = sda;
     };
-    void begin(bool generalCall = false) noexcept;
-    void begin(uint8_t, uint8_t) noexcept;
-    void begin(uint8_t, bool generalCall = false) noexcept;
-    void begin(int, bool generalCall = false) noexcept;
-    void end() noexcept;
-    void setClock(uint32_t) noexcept;
-    void beginTransmission(uint8_t) noexcept;
-    void beginTransmission(int) noexcept;
-    uint8_t endTransmission(void) noexcept;
-    uint8_t endTransmission(uint8_t) noexcept;
-    uint8_t requestFrom(uint8_t, uint8_t) noexcept;
-    uint8_t requestFrom(uint8_t, uint8_t, uint8_t) noexcept;
-    uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t) noexcept;
-    uint8_t requestFrom(int, int) noexcept;
-    uint8_t requestFrom(int, int, int) noexcept;
-    virtual size_t write(uint8_t) noexcept;
-    virtual size_t write(const uint8_t *, size_t) noexcept;
-    virtual int available(void) noexcept;
-    virtual int read(void) noexcept;
-    virtual int peek(void) noexcept;
-    virtual void flush(void) noexcept;
-    void onReceive(void (*)(int) noexcept) noexcept;
-    void onRequest(void (*)(void) noexcept) noexcept;
+    void begin(bool generalCall = false) NOEXCEPT;
+    void begin(uint8_t, uint8_t) NOEXCEPT;
+    void begin(uint8_t, bool generalCall = false) NOEXCEPT;
+    void begin(int, bool generalCall = false) NOEXCEPT;
+    void end() NOEXCEPT;
+    void setClock(uint32_t) NOEXCEPT;
+    void beginTransmission(uint8_t) NOEXCEPT;
+    void beginTransmission(int) NOEXCEPT;
+    uint8_t endTransmission(void) NOEXCEPT;
+    uint8_t endTransmission(uint8_t) NOEXCEPT;
+    uint8_t requestFrom(uint8_t, uint8_t) NOEXCEPT;
+    uint8_t requestFrom(uint8_t, uint8_t, uint8_t) NOEXCEPT;
+    uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t) NOEXCEPT;
+    uint8_t requestFrom(int, int) NOEXCEPT;
+    uint8_t requestFrom(int, int, int) NOEXCEPT;
+    virtual size_t write(uint8_t) NOEXCEPT;
+    virtual size_t write(const uint8_t *, size_t) NOEXCEPT;
+    virtual int available(void) NOEXCEPT;
+    virtual int read(void) NOEXCEPT;
+    virtual int peek(void) NOEXCEPT;
+    virtual void flush(void) NOEXCEPT;
+    void onReceive(void (*)(int) NOEXCEPT) NOEXCEPT;
+    void onRequest(void (*)(void) NOEXCEPT) NOEXCEPT;
 
-    inline size_t write(unsigned long n) noexcept
+    inline size_t write(unsigned long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(long n) noexcept
+    inline size_t write(long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(unsigned int n) noexcept
+    inline size_t write(unsigned int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(int n) noexcept
+    inline size_t write(int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }

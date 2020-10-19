@@ -110,69 +110,69 @@ class HardwareSerial : public Stream {
     serial_t _serial;
 
   public:
-    HardwareSerial(uint32_t _rx, uint32_t _tx) noexcept;
-    HardwareSerial(PinName _rx, PinName _tx) noexcept;
-    HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex = HALF_DUPLEX_DISABLED) noexcept;
-    HardwareSerial(uint32_t _rxtx) noexcept;
-    HardwareSerial(PinName _rxtx) noexcept;
-    void begin(unsigned long baud) noexcept
+    HardwareSerial(uint32_t _rx, uint32_t _tx) NOEXCEPT;
+    HardwareSerial(PinName _rx, PinName _tx) NOEXCEPT;
+    HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex = HALF_DUPLEX_DISABLED) NOEXCEPT;
+    HardwareSerial(uint32_t _rxtx) NOEXCEPT;
+    HardwareSerial(PinName _rxtx) NOEXCEPT;
+    void begin(unsigned long baud) NOEXCEPT
     {
       begin(baud, SERIAL_8N1);
     }
-    void begin(unsigned long, uint8_t) noexcept;
+    void begin(unsigned long, uint8_t) NOEXCEPT;
     void end();
-    virtual int available(void) noexcept;
-    virtual int peek(void) noexcept;
-    virtual int read(void) noexcept;
-    int availableForWrite(void) noexcept;
-    virtual void flush(void) noexcept;
-    virtual size_t write(uint8_t) noexcept;
-    inline size_t write(unsigned long n) noexcept
+    virtual int available(void) NOEXCEPT;
+    virtual int peek(void) NOEXCEPT;
+    virtual int read(void) NOEXCEPT;
+    int availableForWrite(void) NOEXCEPT;
+    virtual void flush(void) NOEXCEPT;
+    virtual size_t write(uint8_t) NOEXCEPT;
+    inline size_t write(unsigned long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(long n) noexcept
+    inline size_t write(long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(unsigned int n) noexcept
+    inline size_t write(unsigned int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(int n) noexcept
+    inline size_t write(int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
     using Print::write; // pull in write(str) and write(buf, size) from Print
-    operator bool() noexcept
+    operator bool() NOEXCEPT
     {
       return true;
     }
 
-    void setRx(uint32_t _rx) noexcept;
-    void setTx(uint32_t _tx) noexcept;
-    void setRx(PinName _rx) noexcept;
-    void setTx(PinName _tx) noexcept;
-    void setInterruptPriority(uint32_t priority) noexcept;
-    uint32_t getInterruptPriority() noexcept;
+    void setRx(uint32_t _rx) NOEXCEPT;
+    void setTx(uint32_t _tx) NOEXCEPT;
+    void setRx(PinName _rx) NOEXCEPT;
+    void setTx(PinName _tx) NOEXCEPT;
+    void setInterruptPriority(uint32_t priority) NOEXCEPT;
+    uint32_t getInterruptPriority() NOEXCEPT;
 
     // Enable half-duplex mode by setting the Rx pin to NC
     // This needs to be done before the call to begin()
-    void setHalfDuplex(void) noexcept;
-    bool isHalfDuplex(void) const noexcept;
-    void enableHalfDuplexRx(void) noexcept;
+    void setHalfDuplex(void) NOEXCEPT;
+    bool isHalfDuplex(void) const NOEXCEPT;
+    void enableHalfDuplexRx(void) NOEXCEPT;
 
     friend class STM32LowPower;
 
     // Interrupt handlers
-    static void _rx_complete_irq(serial_t *obj) noexcept;
-    static int _tx_complete_irq(serial_t *obj) noexcept;
+    static void _rx_complete_irq(serial_t *obj) NOEXCEPT;
+    static int _tx_complete_irq(serial_t *obj) NOEXCEPT;
   private:
     bool _rx_enabled;
     uint8_t _config;
     unsigned long _baud;
-    void init(PinName _rx, PinName _tx) noexcept;
-    void configForLowPower(void) noexcept;
+    void init(PinName _rx, PinName _tx) NOEXCEPT;
+    void configForLowPower(void) NOEXCEPT;
 };
 
 extern HardwareSerial Serial1;

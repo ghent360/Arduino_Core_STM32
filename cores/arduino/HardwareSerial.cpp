@@ -106,17 +106,17 @@
 #endif // HAVE_HWSERIALx
 
 // Constructors ////////////////////////////////////////////////////////////////
-HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx) noexcept
+HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx) NOEXCEPT
 {
   init(digitalPinToPinName(_rx), digitalPinToPinName(_tx));
 }
 
-HardwareSerial::HardwareSerial(PinName _rx, PinName _tx) noexcept
+HardwareSerial::HardwareSerial(PinName _rx, PinName _tx) NOEXCEPT
 {
   init(_rx, _tx);
 }
 
-HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) noexcept
+HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) NOEXCEPT
 {
   // If PIN_SERIALy_RX is not defined assume half-duplex
   _serial.pin_rx = NC;
@@ -253,17 +253,17 @@ HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) no
   init(_serial.pin_rx, _serial.pin_tx);
 }
 
-HardwareSerial::HardwareSerial(uint32_t _rxtx) noexcept
+HardwareSerial::HardwareSerial(uint32_t _rxtx) NOEXCEPT
 {
   init(NC, digitalPinToPinName(_rxtx));
 }
 
-HardwareSerial::HardwareSerial(PinName _rxtx) noexcept
+HardwareSerial::HardwareSerial(PinName _rxtx) NOEXCEPT
 {
   init(NC, _rxtx);
 }
 
-void HardwareSerial::init(PinName _rx, PinName _tx) noexcept
+void HardwareSerial::init(PinName _rx, PinName _tx) NOEXCEPT
 {
   if (_rx == _tx) {
     _serial.pin_rx = NC;
@@ -279,7 +279,7 @@ void HardwareSerial::init(PinName _rx, PinName _tx) noexcept
   _serial.tx_tail = 0;
 }
 
-void HardwareSerial::configForLowPower(void) noexcept
+void HardwareSerial::configForLowPower(void) NOEXCEPT
 {
 #if defined(HAL_PWR_MODULE_ENABLED) && defined(UART_IT_WUF)
   // Reconfigure properly Serial instance to use HSI as clock source
@@ -291,7 +291,7 @@ void HardwareSerial::configForLowPower(void) noexcept
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
 
-void HardwareSerial::_rx_complete_irq(serial_t *obj) noexcept
+void HardwareSerial::_rx_complete_irq(serial_t *obj) NOEXCEPT
 {
   // No Parity error, read byte and store it in the buffer if there is room
   unsigned char c;
@@ -313,7 +313,7 @@ void HardwareSerial::_rx_complete_irq(serial_t *obj) noexcept
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
 
-int HardwareSerial::_tx_complete_irq(serial_t *obj) noexcept
+int HardwareSerial::_tx_complete_irq(serial_t *obj) NOEXCEPT
 {
   // If interrupts are enabled, there must be more data in the output
   // buffer. Send the next byte
@@ -328,7 +328,7 @@ int HardwareSerial::_tx_complete_irq(serial_t *obj) noexcept
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud, uint8_t config) noexcept
+void HardwareSerial::begin(unsigned long baud, uint8_t config) NOEXCEPT
 {
   uint32_t databits = 0;
   uint32_t stopbits = 0;
@@ -392,7 +392,7 @@ void HardwareSerial::begin(unsigned long baud, uint8_t config) noexcept
   uart_attach_rx_callback(&_serial, _rx_complete_irq);
 }
 
-void HardwareSerial::end() noexcept
+void HardwareSerial::end() NOEXCEPT
 {
   // wait for transmission of outgoing data
   flush();
@@ -403,12 +403,12 @@ void HardwareSerial::end() noexcept
   _serial.rx_head = _serial.rx_tail;
 }
 
-int HardwareSerial::available(void) noexcept
+int HardwareSerial::available(void) NOEXCEPT
 {
   return ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _serial.rx_head - _serial.rx_tail)) % SERIAL_RX_BUFFER_SIZE;
 }
 
-int HardwareSerial::peek(void) noexcept
+int HardwareSerial::peek(void) NOEXCEPT
 {
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
@@ -417,7 +417,7 @@ int HardwareSerial::peek(void) noexcept
   }
 }
 
-int HardwareSerial::read(void) noexcept
+int HardwareSerial::read(void) NOEXCEPT
 {
   enableHalfDuplexRx();
   // if the head isn't ahead of the tail, we don't have any characters
@@ -430,7 +430,7 @@ int HardwareSerial::read(void) noexcept
   }
 }
 
-int HardwareSerial::availableForWrite(void) noexcept
+int HardwareSerial::availableForWrite(void) NOEXCEPT
 {
   tx_buffer_index_t head = _serial.tx_head;
   tx_buffer_index_t tail = _serial.tx_tail;
@@ -441,7 +441,7 @@ int HardwareSerial::availableForWrite(void) noexcept
   return tail - head - 1;
 }
 
-void HardwareSerial::flush() noexcept
+void HardwareSerial::flush() NOEXCEPT
 {
   // If we have never written a byte, no need to flush. This special
   // case is needed since there is no way to force the TXC (transmit
@@ -457,7 +457,7 @@ void HardwareSerial::flush() noexcept
   // the hardware finished tranmission (TXC is set).
 }
 
-size_t HardwareSerial::write(uint8_t c) noexcept
+size_t HardwareSerial::write(uint8_t c) NOEXCEPT
 {
   _written = true;
   if (isHalfDuplex()) {
@@ -485,48 +485,48 @@ size_t HardwareSerial::write(uint8_t c) noexcept
   return 1;
 }
 
-void HardwareSerial::setRx(uint32_t _rx) noexcept
+void HardwareSerial::setRx(uint32_t _rx) NOEXCEPT
 {
   _serial.pin_rx = digitalPinToPinName(_rx);
 }
 
-void HardwareSerial::setTx(uint32_t _tx) noexcept
+void HardwareSerial::setTx(uint32_t _tx) NOEXCEPT
 {
   _serial.pin_tx = digitalPinToPinName(_tx);
 }
 
-void HardwareSerial::setRx(PinName _rx) noexcept
+void HardwareSerial::setRx(PinName _rx) NOEXCEPT
 {
   _serial.pin_rx = _rx;
 }
 
-void HardwareSerial::setTx(PinName _tx) noexcept
+void HardwareSerial::setTx(PinName _tx) NOEXCEPT
 {
   _serial.pin_tx = _tx;
 }
 
-void HardwareSerial::setInterruptPriority(uint32_t priority) noexcept
+void HardwareSerial::setInterruptPriority(uint32_t priority) NOEXCEPT
 {
   uart_set_interrupt_priority(&_serial, priority);
 }
 
-uint32_t HardwareSerial::getInterruptPriority() noexcept
+uint32_t HardwareSerial::getInterruptPriority() NOEXCEPT
 {
   // FIXME need to actually get the priority
   return 0;
 }
 
-void HardwareSerial::setHalfDuplex(void) noexcept
+void HardwareSerial::setHalfDuplex(void) NOEXCEPT
 {
   _serial.pin_rx = NC;
 }
 
-bool HardwareSerial::isHalfDuplex(void) const noexcept
+bool HardwareSerial::isHalfDuplex(void) const NOEXCEPT
 {
   return _serial.pin_rx == NC;
 }
 
-void HardwareSerial::enableHalfDuplexRx(void) noexcept
+void HardwareSerial::enableHalfDuplexRx(void) NOEXCEPT
 {
   if (isHalfDuplex()) {
     // In half-duplex mode we have to wait for all TX characters to

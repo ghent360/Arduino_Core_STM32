@@ -78,28 +78,28 @@ class SoftwareSerial : public Stream {
     static uint32_t cur_speed;
 
     // private methods
-    void send() noexcept;
-    void recv() noexcept;
-    void setTX() noexcept;
-    void setRX() noexcept;
-    void setSpeed(uint32_t speed) noexcept;
-    void setRXTX(bool input) noexcept;
-    static void handleInterrupt() noexcept;
+    void send() NOEXCEPT;
+    void recv() NOEXCEPT;
+    void setTX() NOEXCEPT;
+    void setRX() NOEXCEPT;
+    void setSpeed(uint32_t speed) NOEXCEPT;
+    void setRXTX(bool input) NOEXCEPT;
+    static void handleInterrupt() NOEXCEPT;
 
   public:
     // public methods
 
-    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false) noexcept;
+    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false) NOEXCEPT;
     virtual ~SoftwareSerial();
-    void begin(long speed) noexcept;
-    bool listen() noexcept;
-    void end() noexcept;
-    bool isListening() noexcept
+    void begin(long speed) NOEXCEPT;
+    bool listen() NOEXCEPT;
+    void end() NOEXCEPT;
+    bool isListening() NOEXCEPT
     {
       return active_listener == this;
     }
-    bool stopListening() noexcept;
-    bool overflow() noexcept
+    bool stopListening() NOEXCEPT;
+    bool overflow() NOEXCEPT
     {
       bool ret = _buffer_overflow;
       if (ret) {
@@ -107,18 +107,18 @@ class SoftwareSerial : public Stream {
       }
       return ret;
     }
-    int peek() noexcept;
+    int peek() NOEXCEPT;
 
-    virtual size_t write(uint8_t byte) noexcept;
-    virtual int read() noexcept;
-    virtual int available() noexcept;
-    virtual void flush() noexcept;
-    operator bool() noexcept
+    virtual size_t write(uint8_t byte) NOEXCEPT;
+    virtual int read() NOEXCEPT;
+    virtual int available() NOEXCEPT;
+    virtual void flush() NOEXCEPT;
+    operator bool() NOEXCEPT
     {
       return true;
     }
 
-    static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority) noexcept;
+    static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority) NOEXCEPT;
 
     using Print::write;
 };

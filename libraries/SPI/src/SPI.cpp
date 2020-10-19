@@ -13,6 +13,10 @@
 
 SPIClass SPI;
 
+static void spi_init(spi_t *obj, uint32_t speed, spi_mode_e mode, BitOrder bitOrder) {
+  spi_init(obj, SPI_MODE_MASTER, speed, mode, (uint8_t)bitOrder);
+}
+
 /**
   * @brief  Default constructor. Uses pin configuration of variant.h.
   */

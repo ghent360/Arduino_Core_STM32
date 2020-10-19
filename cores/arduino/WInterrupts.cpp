@@ -22,7 +22,7 @@
 #include "PinAF_STM32F1.h"
 #include "interrupt.h"
 
-bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept
+bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) NOEXCEPT
 {
 #if !defined(HAL_EXTI_MODULE_DISABLED)
   uint32_t it_mode;
@@ -62,11 +62,11 @@ bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum Inter
   return true;
 }
 
-static void callbackWrapper(CallbackParameter param) noexcept {
+static void callbackWrapper(CallbackParameter param) NOEXCEPT {
   param.fp();
 }
 
-void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) noexcept
+void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) NOEXCEPT
 {
   attachInterrupt(pin, callbackWrapper, mode, callback);
 }

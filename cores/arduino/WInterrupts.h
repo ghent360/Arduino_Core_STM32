@@ -24,8 +24,8 @@
 
 #include <functional>
 
-typedef std::function<void(void) noexcept> callback_function_t;
-void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) noexcept;
+typedef std::function<void(void) NOEXCEPT> callback_function_t;
+void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) NOEXCEPT;
 
 struct CallbackParameter
 {
@@ -35,16 +35,16 @@ struct CallbackParameter
   int32_t i32;
 
   CallbackParameter(callback_function_t pp) : fp(pp) {}
-  CallbackParameter(void *pp) noexcept : vp(pp) { }
-  CallbackParameter(uint32_t pp) noexcept : u32(pp) { }
-  CallbackParameter(int32_t pp) noexcept : i32(pp) { }
-  CallbackParameter() noexcept : u32(0) { }
+  CallbackParameter(void *pp) NOEXCEPT : vp(pp) { }
+  CallbackParameter(uint32_t pp) NOEXCEPT : u32(pp) { }
+  CallbackParameter(int32_t pp) NOEXCEPT : i32(pp) { }
+  CallbackParameter() NOEXCEPT : u32(0) { }
 };
 
-void StandardCallbackFunctionPrototype(CallbackParameter) noexcept;
+void StandardCallbackFunctionPrototype(CallbackParameter) NOEXCEPT;
 using StandardCallbackFunction = decltype(&StandardCallbackFunctionPrototype);
 
-bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept;
+bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) NOEXCEPT;
 
 extern "C" {
 

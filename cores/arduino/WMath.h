@@ -20,6 +20,9 @@
 #define _WIRING_MATH_
 
 #ifdef __cplusplus
+#include <algorithm>
+using std::min;
+using std::max;
 
 long random32(long);
 long random32(long, long);
@@ -46,54 +49,56 @@ uint16_t makeWord(uint8_t h, uint8_t l) ;
 // We need to use "extern C++" here so that it compiles even if this file was #included inside an "extern C" block
 extern "C++" {
 
-	static inline bool Xor(bool a, bool b) noexcept {
+	static inline bool Xor(bool a, bool b) NOEXCEPT {
 		return (a) ? !b : b;
 	}
 
-	static inline bool XNor(bool a, bool b) noexcept {
+	static inline bool XNor(bool a, bool b) NOEXCEPT {
 		return (a) ? b : !b;
 	}
 
-	static inline int32_t random(int32_t howbig) noexcept {
+	static inline int32_t random(int32_t howbig) NOEXCEPT {
 		return random32(static_cast<long>(howbig));
 	}
 
-	static int32_t random(int32_t howsmall, int32_t howbig) noexcept {
+	static int32_t random(int32_t howsmall, int32_t howbig) NOEXCEPT {
 		return random32(static_cast<long>(howsmall), static_cast<long>(howbig));
 	}
 
 	// Note that constrain<float> will return NaN for a NaN input because of the way we define min<float> and max<float>
-	template<class T, class TC> inline constexpr T constrain(T val, TC vmin, TC vmax) noexcept {
-		return max<T>(min<T>(val, vmax), vmin);
+	template<typename T, typename LO, typename HI>
+	inline constexpr const T& constrain(const T& val, const LO& vmin, const HI& vmax) NOEXCEPT {
+		//return std::clamp(val, vmin, vmax);
+		return (val < vmin) ? vmin : (val > vmax) ? vmax : val;
 	}
 
-	static inline constexpr float fsquare(float arg) noexcept {
+	static inline constexpr float fsquare(float arg) NOEXCEPT {
 		return arg * arg;
 	}
 
-	static inline constexpr double dsquare(double arg) noexcept {
+	static inline constexpr double dsquare(double arg) NOEXCEPT {
 		return arg * arg;
 	}
 
-	static inline constexpr uint64_t isquare64(int32_t arg) noexcept {
+	static inline constexpr uint64_t isquare64(int32_t arg) NOEXCEPT {
 		return (uint64_t)((int64_t)arg * arg);
 	}
 
-	static inline constexpr uint64_t isquare64(uint32_t arg) noexcept {
+	static inline constexpr uint64_t isquare64(uint32_t arg) NOEXCEPT {
 		return (uint64_t)arg * arg;
 	}
 
 	// Find the lowest set bit. Returns the lowest set bit number, undefined if no bits are set.
 	// GCC provides intrinsics, but unhelpfully they are in terms of int, long and long long instead of uint32_t, uint64_t etc.
-	static inline unsigned int LowestSetBitNumber(unsigned int val) noexcept {
+	static inline unsigned int LowestSetBitNumber(unsigned int val) NOEXCEPT {
 		return (unsigned int)__builtin_ctz(val);
 	}
 
-	static inline unsigned int LowestSetBitNumber(unsigned long val) noexcept {
+	static inline unsigned int LowestSetBitNumber(unsigned long val) NOEXCEPT {
 		return (unsigned int)__builtin_ctzl(val);
 	}
 
-	static inline unsigned int LowestSetBitNumber(unsigned long long val) noexcept	{
+	static inline unsigned int LowestSetBitNumber(unsigned long long val) NOEXCEPT	{
 		return (unsigned int)__builtin_ctzll(val);
 	}
 }
