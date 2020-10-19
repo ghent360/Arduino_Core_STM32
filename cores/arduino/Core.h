@@ -20,11 +20,13 @@
 #ifndef Core_h
 #define Core_h
 
+#ifdef USE_ECV
 #include "ecv.h"		// macros for Escher C/C++ Verifier design-by-contract annotations
 #undef array
 #undef yield			// eCv definition clashes with function 'yield' in wiring.c (can use _ecv_yield instead within annotations)
 #undef value			// needed because we include <optional> in some projects
 #undef result
+#endif
 
 //#include "compiler.h"
 
