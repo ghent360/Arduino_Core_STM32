@@ -12,19 +12,15 @@
 
 namespace Cache
 {
-	void Init() noexcept;
-	void Enable() noexcept;
-	void Disable() noexcept;
-	void Flush(const volatile void *start, size_t length) noexcept;
-	void Invalidate(const volatile void *start, size_t length) noexcept;
+  void Init() noexcept;
+  void Enable() noexcept;
+  void Disable() noexcept;
+  void Flush(const volatile void *start, size_t length) noexcept;
+  void Invalidate(const volatile void *start, size_t length) noexcept;
 
-	inline void FlushBeforeDMAReceive(const volatile void *start, size_t length) noexcept { Flush(start, length); }
-	inline void InvalidateAfterDMAReceive(const volatile void *start, size_t length) noexcept { Invalidate(start, length); }
-	inline void FlushBeforeDMASend(const volatile void *start, size_t length) noexcept { Flush(start, length); }
-
-#if SAM4E
-	uint32_t GetHitCount() noexcept;
-#endif
+  inline void FlushBeforeDMAReceive(const volatile void *start, size_t length) noexcept { Flush(start, length); }
+  inline void InvalidateAfterDMAReceive(const volatile void *start, size_t length) noexcept { Invalidate(start, length); }
+  inline void FlushBeforeDMASend(const volatile void *start, size_t length) noexcept { Flush(start, length); }
 };
 
 // Entry points that can be called from ASF C code

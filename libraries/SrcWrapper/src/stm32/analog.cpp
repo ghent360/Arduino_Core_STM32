@@ -1029,7 +1029,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
 void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value, TimerCompareFormat_t resolution)
 {
   TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
-  if (Instance == nullptr) return false;
+  if (Instance == nullptr) return;
   HardwareTimer *HT;
   TimerModes_t previousMode;
   uint32_t index = get_timer_index(Instance);

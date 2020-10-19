@@ -96,7 +96,7 @@ void Stream::setTimeout(unsigned long timeout) noexcept  // sets the maximum num
 }
 
  // find returns true if the target string is found
-bool  Stream::find(char *target) noexcept
+bool Stream::find(const char *target) noexcept
 {
   return findUntil(target, strlen(target), NULL, 0);
 }
@@ -117,7 +117,7 @@ bool  Stream::findUntil(const char *target, const char *terminator) noexcept
 // reads data from the stream until the target string of the given length is found
 // search terminated if the terminator string is found
 // returns true if target string is found, false if terminated or timed out
-bool Stream::findUntil(char *target, size_t targetLen, const char *terminator, size_t termLen) noexcept
+bool Stream::findUntil(const char *target, size_t targetLen, const char *terminator, size_t termLen) noexcept
 {
   if (terminator == NULL) {
     MultiTarget t[1] = {{target, targetLen, 0}};

@@ -4,7 +4,6 @@
 /*
  * Core and peripherals registers definitions
 */
-//#include "interrupt.h"
 #include "analog.h"
 #include "backup.h"
 #include "clock.h"
@@ -16,6 +15,7 @@
 #include "uart.h"
 
 #ifdef __cplusplus
+#include "interrupt.h"
 extern "C" {
 #endif /* __cplusplus */
 void init(void) ;

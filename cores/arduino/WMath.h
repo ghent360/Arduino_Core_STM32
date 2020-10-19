@@ -19,16 +19,17 @@
 #ifndef _WIRING_MATH_
 #define _WIRING_MATH_
 
-extern long random(long) ;
-extern long random(long, long) ;
-extern void randomSeed(uint32_t dwSeed) ;
-extern long map(long, long, long, long, long) ;
+#ifdef __cplusplus
 
-extern uint16_t makeWord(uint16_t w) ;
-extern uint16_t makeWord(uint8_t h, uint8_t l) ;
+long random32(long);
+long random32(long, long);
+void randomSeed(uint32_t dwSeed);
+long map(long, long, long, long, long);
+
+uint16_t makeWord(uint16_t w) ;
+uint16_t makeWord(uint8_t h, uint8_t l) ;
 
 #define word(...) makeWord(__VA_ARGS__)
-#ifdef __cplusplus
 
 #include <cmath>
 
@@ -45,94 +46,79 @@ extern uint16_t makeWord(uint8_t h, uint8_t l) ;
 // We need to use "extern C++" here so that it compiles even if this file was #included inside an "extern C" block
 extern "C++" {
 
-	inline bool Xor(bool a, bool b) noexcept
-	{
+	static inline bool Xor(bool a, bool b) noexcept {
 		return (a) ? !b : b;
 	}
 
-	inline bool XNor(bool a, bool b) noexcept
-	{
+	static inline bool XNor(bool a, bool b) noexcept {
 		return (a) ? b : !b;
 	}
 
-	inline int32_t random(int32_t howbig) noexcept
-	{
-		return random32() % howbig;
+	static inline int32_t random(int32_t howbig) noexcept {
+		return random32(static_cast<long>(howbig));
 	}
 
-	extern int32_t random(int32_t, int32_t) noexcept;
+	static int32_t random(int32_t howsmall, int32_t howbig) noexcept {
+		return random32(static_cast<long>(howsmall), static_cast<long>(howbig));
+	}
 
-	template<class X> inline constexpr X min(X _a, X _b) noexcept
-	{
+	template<class X> inline constexpr X min(X _a, X _b) noexcept {
 		return (_a < _b) ? _a : _b;
 	}
 
-	template<class X> inline constexpr X max(X _a, X _b) noexcept
-	{
+	template<class X> inline constexpr X max(X _a, X _b) noexcept {
 		return (_a > _b) ? _a : _b;
 	}
 
 	// Specialisations for float and double to handle NaNs properly
-	template<> inline constexpr float min(float _a, float _b) noexcept
-	{
+	template<> inline constexpr float min(float _a, float _b) noexcept {
 		return (std::isnan(_a) || _a < _b) ? _a : _b;
 	}
 
-	template<> inline constexpr float max(float _a, float _b) noexcept
-	{
+	template<> inline constexpr float max(float _a, float _b) noexcept {
 		return (std::isnan(_a) || _a > _b) ? _a : _b;
 	}
 
-	template<> inline constexpr double min(double _a, double _b) noexcept
-	{
+	template<> inline constexpr double min(double _a, double _b) noexcept {
 		return (std::isnan(_a) || _a < _b) ? _a : _b;
 	}
 
-	template<> inline constexpr double max(double _a, double _b) noexcept
-	{
+	template<> inline constexpr double max(double _a, double _b) noexcept {
 		return (std::isnan(_a) || _a > _b) ? _a : _b;
 	}
 
 	// Note that constrain<float> will return NaN for a NaN input because of the way we define min<float> and max<float>
-	template<class T> inline constexpr T constrain(T val, T vmin, T vmax) noexcept
-	{
+	template<class T> inline constexpr T constrain(T val, T vmin, T vmax) noexcept {
 		return max<T>(min<T>(val, vmax), vmin);
 	}
 
-	inline constexpr float fsquare(float arg) noexcept
-	{
+	static inline constexpr float fsquare(float arg) noexcept {
 		return arg * arg;
 	}
 
-	inline constexpr double dsquare(double arg) noexcept
-	{
+	static inline constexpr double dsquare(double arg) noexcept {
 		return arg * arg;
 	}
 
-	inline constexpr uint64_t isquare64(int32_t arg) noexcept
-	{
+	static inline constexpr uint64_t isquare64(int32_t arg) noexcept {
 		return (uint64_t)((int64_t)arg * arg);
 	}
 
-	inline constexpr uint64_t isquare64(uint32_t arg) noexcept
-	{
+	static inline constexpr uint64_t isquare64(uint32_t arg) noexcept {
 		return (uint64_t)arg * arg;
 	}
 
 	// Find the lowest set bit. Returns the lowest set bit number, undefined if no bits are set.
 	// GCC provides intrinsics, but unhelpfully they are in terms of int, long and long long instead of uint32_t, uint64_t etc.
-	inline unsigned int LowestSetBitNumber(unsigned int val) noexcept
-	{
+	static inline unsigned int LowestSetBitNumber(unsigned int val) noexcept {
 		return (unsigned int)__builtin_ctz(val);
 	}
 
-	inline unsigned int LowestSetBitNumber(unsigned long val) noexcept
-	{
+	static inline unsigned int LowestSetBitNumber(unsigned long val) noexcept {
 		return (unsigned int)__builtin_ctzl(val);
 	}
 
-	inline unsigned int LowestSetBitNumber(unsigned long long val) noexcept
-	{
+	static inline unsigned int LowestSetBitNumber(unsigned long long val) noexcept	{
 		return (unsigned int)__builtin_ctzll(val);
 	}
 }

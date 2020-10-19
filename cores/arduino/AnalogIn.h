@@ -22,7 +22,9 @@ static constexpr unsigned int AdcBits = ADC_RESOLUTION;
 // Read the most recent result from a channel
 uint16_t AnalogInReadChannel(AnalogChannelNumber channel) noexcept;
 
-typedef void (*AnalogCallback_t)(void) noexcept;
+void AbalogCallbackFunction(void) noexcept;
+using AnalogCallback_t = decltype(&AbalogCallbackFunction);
+//typedef void (*AnalogCallback_t)(void) noexcept;
 
 // Set up a callback for when all conversions have been completed. Returns the previous callback pointer.
 AnalogCallback_t AnalogInSetCallback(AnalogCallback_t) noexcept;

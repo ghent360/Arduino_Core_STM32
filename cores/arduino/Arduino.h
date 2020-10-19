@@ -33,7 +33,7 @@
   #include "SrcWrapper.h"
 #endif
 
-//#include "wiring.h"
+#include "wiring.h"
 
 /* sketch */
 

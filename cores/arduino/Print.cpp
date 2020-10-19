@@ -134,7 +134,7 @@ size_t Print::print(double n, int digits) noexcept
   return printFloat(n, digits);
 }
 
-size_t Print::println(void) noexcept
+size_t Print::println(const __FlashStringHelper *ifsh) noexcept
 {
   size_t n = print(ifsh);
   n += println();
