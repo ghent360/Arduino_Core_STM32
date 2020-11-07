@@ -20,7 +20,6 @@
 #define ARDUINO_MAIN
 #include "Arduino.h"
 
-//extern void __libc_init_array(void);
 //extern void init(void);
 extern "C" void UrgentInit(void);
 extern "C" void AppMain() NOEXCEPT;
@@ -50,7 +49,6 @@ __attribute__((constructor(101))) void premain()
 #endif
 #endif
   //UrgentInit();
-  //__libc_init_array();	// initialize C library and call C++ constructors for static data
   init();
 }
 
