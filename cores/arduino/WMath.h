@@ -61,7 +61,7 @@ extern "C++" {
 		return random32(static_cast<long>(howbig));
 	}
 
-	static int32_t random(int32_t howsmall, int32_t howbig) NOEXCEPT {
+	static inline int32_t random(int32_t howsmall, int32_t howbig) NOEXCEPT {
 		return random32(static_cast<long>(howsmall), static_cast<long>(howbig));
 	}
 
