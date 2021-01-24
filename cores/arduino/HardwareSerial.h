@@ -167,6 +167,7 @@ class HardwareSerial : public Stream {
     // Interrupt handlers
     static void _rx_complete_irq(serial_t *obj) NOEXCEPT;
     static int _tx_complete_irq(serial_t *obj) NOEXCEPT;
+    friend class ConfigurableUART;
   private:
     bool _rx_enabled;
     uint8_t _config;

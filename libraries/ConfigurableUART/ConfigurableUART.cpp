@@ -220,15 +220,6 @@ int ConfigurableUART::availableForWrite(void) NOEXCEPT
     return 0;
 }
 
-size_t ConfigurableUART::canWrite() NOEXCEPT
-{
-    if(serialPort != nullptr)
-    {
-        return serialPort->canWrite();
-    }
-    return 0;
-}
-
 size_t ConfigurableUART::write(const uint8_t ch) NOEXCEPT
 {
     if(serialPort != nullptr)
