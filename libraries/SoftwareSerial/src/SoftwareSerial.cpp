@@ -334,7 +334,7 @@ SoftwareSerial::SoftwareSerial(
 //
 // Destructor
 //
-SoftwareSerial::~SoftwareSerial()
+SoftwareSerial::~SoftwareSerial() NOEXCEPT
 {
   end();
 }

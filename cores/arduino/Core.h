@@ -48,7 +48,7 @@ extern "C"{
 
 void yield(void);
 
-typedef PinName Pin;
+typedef uint8_t Pin;
 static const Pin NoPin = NC;
 typedef uint8_t DmaChannel;
 typedef uint16_t PwmFrequency;		// type used to represent a PWM frequency. 0 sometimes means "default".
@@ -59,7 +59,7 @@ typedef uint32_t NvicPriority;
 #endif
 
 #ifdef __cplusplus
-
+extern const char * const sysStackLimit;
 // SSP/SPI Channels - yes I know the names do not match the numbers...
 enum SSPChannel : uint8_t
 {
@@ -69,10 +69,16 @@ enum SSPChannel : uint8_t
     SSP3,
     //Software SPI
     SWSPI0,
-
+    SWSPI1,
+    SWSPI2,
+    // Hardware SDIO
+    SSPSDIO = 0xef,
     // Not defined
     SSPNONE = 0xff
 };
+constexpr size_t NumSPIDevices = (uint32_t)SWSPI2+1;
+constexpr size_t NumSoftwareSPIDevices = 3;
+
 #if 0
 // Definitions for PWM channels
 enum EPWMChannel : int8_t
@@ -155,11 +161,32 @@ extern const PinDescription g_APinDescription[];
 #include "WCharacter.h"
 #include "HardwareSerial.h"
 #include "WInterrupts.h"
+// Optimised version of memcpy for use when the source and destination are known to be 32-bit aligned and a whole number of 32-bit words is to be copied
+void memcpyu32(uint32_t *dst, const uint32_t *src, size_t numWords) noexcept;
+
+// memcpy for int32_t arrays
+inline void memcpyi32(int32_t *dst, const int32_t *src, size_t numWords) noexcept
+{
+	static_assert(sizeof(int32_t) == sizeof(uint32_t));
+	static_assert(alignof(int32_t) == alignof(uint32_t));
+	memcpyu32(reinterpret_cast<uint32_t*>(dst), reinterpret_cast<const uint32_t*>(src), numWords);
+}
+
+// memcpy for float arrays
+inline void memcpyf(float *dst, const float *src, size_t numFloats) noexcept
+{
+	static_assert(sizeof(float) == sizeof(uint32_t));
+	static_assert(alignof(float) == alignof(uint32_t));
+	memcpyu32(reinterpret_cast<uint32_t*>(dst), reinterpret_cast<const uint32_t*>(src), numFloats);
+}
 
 #endif // __cplusplus
 
 // Include board variant
 #include "variant.h"
+
+// Address of main RAM bank
+#define IRAM_ADDR 0x20000000
 
 // Space reserved for Handler stack in bytes
 #define SystemStackSize (1024)

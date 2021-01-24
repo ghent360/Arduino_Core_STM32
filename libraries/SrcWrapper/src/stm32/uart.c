@@ -385,6 +385,7 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   } else if (HAL_UART_Init(huart) != HAL_OK) {
     return;
   }
+  HAL_NVIC_EnableIRQ(obj->irq);
 }
 
 /**
@@ -395,6 +396,7 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
 void uart_deinit(serial_t *obj)
 {
   /* Reset UART and disable clock */
+  HAL_NVIC_DisableIRQ(obj->irq);
   switch (obj->index) {
 #if defined(USART1_BASE)
     case UART1_INDEX:

@@ -120,12 +120,11 @@ class HardwareSerial : public Stream {
       begin(baud, SERIAL_8N1);
     }
     void begin(unsigned long, uint8_t) NOEXCEPT;
-    void end();
+    void end() NOEXCEPT;
     virtual int available(void) NOEXCEPT;
     virtual int peek(void) NOEXCEPT;
     virtual int read(void) NOEXCEPT;
     int availableForWrite(void) NOEXCEPT;
-    size_t canWrite() NOEXCEPT;
     virtual void flush(void) NOEXCEPT;
     virtual size_t write(uint8_t) NOEXCEPT;
     inline size_t write(unsigned long n) NOEXCEPT

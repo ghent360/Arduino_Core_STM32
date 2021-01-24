@@ -26,15 +26,22 @@ HardwarePWM::HardwarePWM() NOEXCEPT : timer(nullptr), channel(0)
 
 void HardwarePWM::free() NOEXCEPT
 {
-    if (timer) timer->setMode(channel, TIMER_DISABLED);
+    //debugPrintf("Free timer chan %d\n", channel);
+    if (timer) 
+    {
+        timer->pause();
+        timer->setMode(channel, TIMER_DISABLED);
+        timer->resume();
+    }
     timer = nullptr;
     channel = 0;
 }
 
-HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCEPT
+HybridPWMBase *HardwarePWM::allocate(uint32_t ulPin, uint32_t freq, float value) NOEXCEPT
 {
     //debugPrintf("HWPWM allocate pin %x, freq %d\n", static_cast<int>(pin), static_cast<int>(freq));
     // first find out if we have a timer for this pin
+    PinName pin = digitalPinToPinName(ulPin);
     TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
     if (instance == nullptr) return nullptr;
     uint32_t index = get_timer_index(instance);
@@ -42,7 +49,7 @@ HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCE
     HardwareTimer *t = (HardwareTimer *)(HardwareTimer_Handle[index]->__this);
     if (t == nullptr)
     {
-        debugPrintf("Unable to get hardware timer for pin %x index %d\n", static_cast<int>(pin), static_cast<int>(index));
+        debugPrintf("Unable to get hardware timer for pin %lx index %d\n", ulPin, static_cast<int>(index));
         return nullptr;
     }
     // Get the channel we need
@@ -71,6 +78,7 @@ HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCE
     if (freq != 0)
     {
         // set the hardware up ready to go
+        t->pause();
         t->setMode(chan, TIMER_OUTPUT_COMPARE_PWM1, pin);
         t->setOverflow(freq, HERTZ_FORMAT);
         t->setCaptureCompare(chan, (uint32_t)(value*PWM_MAX_DUTY_CYCLE), RESOLUTION_12B_COMPARE_FORMAT);
@@ -86,7 +94,8 @@ void HardwarePWM::setValue(float value) NOEXCEPT
 
 void HardwarePWM::appendStatus(const StringRef& reply) NOEXCEPT
 {
-    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(pwmPin->pin, PinMap_PWM);
+    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(
+        digitalPinToPinName(pwmPin->pin), PinMap_PWM);
     uint32_t index = get_timer_index(instance);
 
     reply.catf(" Tim %d chan %d", static_cast<int>(index+1), static_cast<int>(channel));

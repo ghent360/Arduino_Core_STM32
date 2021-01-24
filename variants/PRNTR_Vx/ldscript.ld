@@ -59,9 +59,10 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
-CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)     : ORIGIN = 0x08000000 + LD_FLASH_OFFSET, LENGTH = LD_MAX_SIZE - LD_FLASH_OFFSET
+FLASH (rx)    : ORIGIN = 0x8000000 + LD_FLASH_OFFSET, LENGTH = LD_MAX_SIZE - LD_FLASH_OFFSET - 16K
+RESETDATA (rx): ORIGIN = 0x8000000 + LD_FLASH_OFFSET + LD_MAX_SIZE - LD_FLASH_OFFSET - 16K, LENGTH = 16K
+RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = LD_MAX_DATA_SIZE
+CCMRAM (rw)   : ORIGIN = 0x10000000, LENGTH = 64K
 }
 
 /* Define output sections */
@@ -74,9 +75,8 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
-
   /* The program code and other data goes into FLASH */
-  .text :
+  .text ALIGN(8):
   {
     . = ALIGN(4);
     *(.text)           /* .text sections (code) */
@@ -93,7 +93,7 @@ SECTIONS
   } >FLASH
 
   /* Constant data goes into FLASH */
-  .rodata :
+  .rodata ALIGN(4):
   {
     . = ALIGN(4);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
@@ -128,6 +128,13 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
+  .reset_data (NOLOAD) :
+  {
+    . = ALIGN(4);
+    __reset_data_start = .;
+    KEEP(*(.reset_data))
+    . = ALIGN(4);
+  } >RESETDATA
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -191,8 +198,6 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
-
-
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
@@ -203,5 +208,3 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }
-
-

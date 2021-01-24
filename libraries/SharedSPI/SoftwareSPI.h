@@ -16,15 +16,20 @@ public:
     bool waitForTxEmpty() NOEXCEPT;
     
     static SoftwareSPI SWSSP0;
+    static SoftwareSPI SWSSP1;
+    static SoftwareSPI SWSSP2;
 
 private:
     
-    uint8_t transfer_byte(uint8_t byte_out) NOEXCEPT;
+    uint8_t mode01TransferByte(uint8_t byte_out) NOEXCEPT;
+    uint8_t mode23TransferByte(uint8_t byte_out) NOEXCEPT;
     
     bool needInit;
     Pin sck;
     Pin mosi;
     Pin miso;
+    uint32_t mode;
+    uint32_t delay;
 };
 
 
