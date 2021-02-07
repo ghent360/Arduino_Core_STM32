@@ -10,8 +10,6 @@
 
 #include "HardwareCRC32.h"
 
-#include "stm32_defs.h"
-
 // Original code
 #if 0
 void

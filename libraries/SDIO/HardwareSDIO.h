@@ -1,6 +1,7 @@
 #ifndef __HARDWARESDIO_H
 #define __HARDWARESDIO_H
-#include "stm32f4xx_hal.h"
+
+#include "stm32_def.h"
 #include "Core.h"
 #include "FreeRTOS.h"
 #include "task.h"

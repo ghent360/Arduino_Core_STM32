@@ -18,7 +18,7 @@ Total time for for 16 channels 47*16 = 750uS or approx 1333 full samples per sec
 */
 #include "Core.h"
 #include "AnalogIn.h"
-#include "stm32_defs.h"
+#include "stm32_def.h"
 
 extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
