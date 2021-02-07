@@ -17,8 +17,7 @@
 */
 
 #include "watchdog.h"
-#include "stm32f4xx_hal_rcc.h"
-#include "stm32f4xx_hal_wwdg.h"
+#include "stm32_defs.h"
 
 extern "C" {
 

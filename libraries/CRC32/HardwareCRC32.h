@@ -1,7 +1,7 @@
 #ifndef HARDWARECRC32_H
 #define HARDWARECRC32_H
-#include "stm32f4xx_hal_crc.h"
 
+#include "stm32_defs.h"
 class HardwareCRC32
 {
 public:
