@@ -422,12 +422,15 @@ static uint8_t  USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
   UNUSED(cfgidx);
   USBD_CDC_HandleTypeDef   *hcdc;
 
-  hcdc = USBD_malloc(sizeof(USBD_CDC_HandleTypeDef));
-
+  // originally this was 
+  // hcdc = USBD_malloc(sizeof(USBD_CDC_HandleTypeDef));
+  // alas this is called inside an interrupt and we can't use malloc, so data is pre-allocated
+  hcdc = pdev->pPreAllocatedClassData;
   if (hcdc == NULL) {
     pdev->pClassData = NULL;
     return (uint8_t)USBD_EMEM;
   }
+  memset(hcdc, 0, sizeof(USBD_CDC_HandleTypeDef));
 
   pdev->pClassData = (void *)hcdc;
 
@@ -515,7 +518,9 @@ static uint8_t  USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
   /* DeInit  physical Interface components */
   if (pdev->pClassData != NULL) {
     ((USBD_CDC_ItfTypeDef *)pdev->pUserData)->DeInit();
-    (void)USBD_free(pdev->pClassData);
+    //The pClassData is not dynamically allocated in USBD_CDC_Init, 
+    //just reset the pointer. It will be freed in a different place.
+    //(void)USBD_free(pdev->pClassData);
     pdev->pClassData = NULL;
   }
 
@@ -646,7 +651,7 @@ static uint8_t  USBD_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum)
 {
   USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassData;
 
-  if (pdev->pClassData == NULL) {
+  if (hcdc == NULL) {
     return (uint8_t)USBD_FAIL;
   }
 
